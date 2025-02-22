@@ -52,12 +52,10 @@ Are you tired of Microsoft Teams showing you as "Away" when you step away from y
 
 📸 Screenshots & Demo
 
+![alt text](<assets/Screenshot from 2025-02-22 15-57-57.png>)
 
-![alt text](<Screenshot from 2025-02-22 15-58-20.png>)
+![alt text](<assets/Screenshot from 2025-02-22 15-58-20-1.png>)
 
-![alt text](<Screenshot from 2025-02-22 15-57-57.png>) 
-
-![alt text](<Screenshot from 2025-02-22 15-58-20-1.png>)
 
 KeepActive Pro UI
 
