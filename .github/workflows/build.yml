@@ -33,12 +33,12 @@ jobs:
       - name: Build Executable (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          pyinstaller --onefile --windowed --icon=assets/icon.ico --add-data "assets;assets" src/keep_active_pro.py
+          pyinstaller --onefile --windowed --add-data "assets;assets" src/keep_active_pro.py
 
       - name: Build Executable (macOS)
         if: matrix.os == 'macos-latest'
         run: |
-          pyinstaller --onefile --windowed --icon=assets/icon.icns --add-data "assets:assets" src/keep_active_pro.py
+          pyinstaller --onefile --windowed --add-data "assets:assets" src/keep_active_pro.py
 
       - name: Upload Windows Build
         if: matrix.os == 'windows-latest'
