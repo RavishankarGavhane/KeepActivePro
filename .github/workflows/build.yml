@@ -1,0 +1,55 @@
+name: Build KeepActivePro Executables
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build & Package KeepActivePro
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller pyautogui pillow
+
+      - name: Build Executable (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          pyinstaller --onefile --windowed --icon=assets/icon.ico --add-data "assets;assets" src/keep_active_pro.py
+
+      - name: Build Executable (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          pyinstaller --onefile --windowed --icon=assets/icon.icns --add-data "assets:assets" src/keep_active_pro.py
+
+      - name: Upload Windows Build
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: KeepActivePro-Windows
+          path: dist/keep_active_pro.exe
+
+      - name: Upload macOS Build
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: KeepActivePro-macOS
+          path: dist/keep_active_pro.dmg
