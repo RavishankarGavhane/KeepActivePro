@@ -40,6 +40,13 @@ jobs:
         run: |
           pyinstaller --onefile --windowed --add-data "assets:assets" src/keep_active_pro.py
 
+          # Create a directory to hold the .app file
+          mkdir -p dist/dmg_build
+          mv dist/keep_active_pro.app dist/dmg_build/
+
+          # Create a .dmg file from the .app bundle
+          hdiutil create -volname "KeepActivePro" -srcfolder dist/dmg_build -ov -format UDZO dist/keep_active_pro.dmg
+
       - name: Upload Windows Build
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4  # UPDATED to v4
