@@ -5,78 +5,191 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="google3e1ba1271d41a6e7.html" />
     <title>KeepActive Pro - Stay Online & Productive</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            padding: 150px 0;
+        }
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+        }
+        .hero-section p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #6a11cb;
+        }
+        .feature-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        .footer {
+            background: #343a40;
+            color: white;
+            padding: 40px 0;
+        }
+        .footer a {
+            color: #6a11cb;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            color: #2575fc;
+        }
+        .btn-primary {
+            background: #6a11cb;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: #2575fc;
+        }
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #6a11cb;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>KeepActive Pro 🖥️</h1>
-    <p>🔥 Keep your system awake and Microsoft Teams online automatically! 🚀 Stay active as per your defined duration with KeepActive Pro.</p>
 
-    <h2>🌟 Introduction</h2>
-    <p>Are you tired of Microsoft Teams showing you as "Away" when you step away from your keyboard? Need to keep your PC awake during long meetings, downloads, or remote work sessions? 
-       <strong>KeepActive Pro</strong> is a lightweight yet powerful utility that ensures your system stays active for a user-defined duration.</p>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">KeepActive Pro</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#download">Download</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <h2>🎯 Key Use Cases:</h2>
-    <ul>
-        <li>✅ Keep Microsoft Teams & Zoom online – No more "Away" status!</li>
-        <li>✅ Prevent System Sleep – Ensure your downloads, remote work, and processes are uninterrupted.</li>
-        <li>✅ Stay Active for Presentations – Prevent screen timeout during online meetings or presentations.</li>
-        <li>✅ Customizable Duration – Set how long you want to stay active.</li>
-        <li>✅ Cross-Platform Support – Works on Windows, macOS, and Linux.</li>
-        <li>✅ Runs in the Background – Lightweight and efficient without consuming extra resources.</li>
-    </ul>
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4">KeepActive Pro 🖥️</h1>
+            <p class="lead">🔥 Keep your system awake and Microsoft Teams online automatically! 🚀 Stay active as per your defined duration with KeepActive Pro.</p>
+            <a href="#download" class="btn btn-primary btn-lg">Download Now</a>
+        </div>
+    </section>
 
-    <h2>🚀 Features</h2>
-    <ul>
-        <li>✔️ Prevents system sleep & inactivity detection</li>
-        <li>✔️ Works with Teams, Zoom, Skype, and other online tools</li>
-        <li>✔️ Set custom active duration (Minutes/Hours)</li>
-        <li>✔️ No installation required – just run & stay active</li>
-        <li>✔️ Animated UI with smooth user experience</li>
-        <li>✔️ 100% Free & Open Source</li>
-    </ul>
+    <!-- Features Section -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">🌟 Features</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card feature-card h-100 text-center p-4">
+                        <div class="feature-icon">✔️</div>
+                        <h3>Prevents System Sleep</h3>
+                        <p>Ensure your downloads, remote work, and processes are uninterrupted.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card feature-card h-100 text-center p-4">
+                        <div class="feature-icon">✔️</div>
+                        <h3>Customizable Duration</h3>
+                        <p>Set how long you want to stay active with a simple interface.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card feature-card h-100 text-center p-4">
+                        <div class="feature-icon">✔️</div>
+                        <h3>Cross-Platform Support</h3>
+                        <p>Works seamlessly on Windows, macOS, and Linux.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <h2>🔽 Download & Installation</h2>
-    <p><strong>🖥 Windows:</strong> <a href="#">Download and run KeepActivePro.exe</a></p>
-    <p><strong>🍏 macOS:</strong> <a href="#">Download and install KeepActivePro.dmg</a></p>
-    <p><strong>🐧 Linux:</strong> <a href="#">Download and execute KeepActivePro.AppImage</a></p>
+    <!-- Download Section -->
+    <section id="download" class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">🔽 Download & Installation</h2>
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <h3>🖥 Windows</h3>
+                    <p><a href="#" class="btn btn-primary">Download KeepActivePro.exe</a></p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h3>🍏 macOS</h3>
+                    <p><a href="#" class="btn btn-primary">Download KeepActivePro.dmg</a></p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h3>🐧 Linux</h3>
+                    <p><a href="#" class="btn btn-primary">Download KeepActivePro.AppImage</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <h2>🛠️ How to Use</h2>
-    <ol>
-        <li>Download & open KeepActive Pro</li>
-        <li>Enter the duration (in minutes) for which you want to stay active</li>
-        <li>Click "Start" – Your system will remain active for the set duration</li>
-        <li>Stay online without interruptions!</li>
-    </ol>
+    <!-- About Section -->
+    <section id="about" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">👨‍💻 Developed by</h2>
+            <div class="text-center">
+                <!-- Add your photo here -->
+                <img src="/home/ravishankar/KeepActivePro/assets/Ravishankar Gavhane Photo.jpg" alt="Ravishankar Gavhane" class="profile-photo">
+                <p><strong>Ravishankar Gavhane</strong> | Sr. Python Developer | Software Engineer</p>
+                <p>📍 Pune, Maharashtra</p>
+                <p>📞 +91 7774911193</p>
+                <p>📧 Email: gavhane.ravishankar4@gmail.com</p>
+                <p>🔗 <a href="#" class="btn btn-outline-primary">LinkedIn Profile</a></p>
+            </div>
+        </div>
+    </section>
 
-    <h2>📸 Screenshots & Demo</h2>
-    <img src="assets/Screenshot from 2025-02-22 15-57-57.png" alt="KeepActive Pro Screenshot">
-    <img src="assets/Screenshot from 2025-02-22 15-58-20-1.png" alt="KeepActive Pro Screenshot 2">
+    <!-- Footer -->
+    <footer class="footer text-center">
+        <div class="container">
+            <p>🚀 Support Open Source! If you find this project useful, please ⭐ star the repository on GitHub.</p>
+            <p>🔥 KeepActive Pro – Stay Online. Stay Productive.</p>
+        </div>
+    </footer>
 
-    <h2>🎥 Animated UI & Active Mode</h2>
-    <img src="assets/20250222_1256_KeepActive Icon Reveal_simple_compose_01jmp8syjheza8a3kzx6kgs0pv.gif" alt="KeepActive Pro Animation">
-    <img src="assets/20250222_1324_KeepActive Pro Icon_storyboard_01jmpach48esb93pmbbg0zvvqd.gif" alt="KeepActive Pro Animation 2">
-
-    <h2>👨‍💻 Developed by</h2>
-    <p><strong>Ravishankar Gavhane</strong> | Sr. Python Developer | Software Engineer</p>
-    <p>📍 Pune, Maharashtra</p>
-    <p>📞 +91 7774911193</p>
-    <p>📧 Email: gavhane.ravishankar4@gmail.com</p>
-    <p>🔗 <a href="#">LinkedIn Profile</a></p>
-
-    <h2>🎓 Education</h2>
-    <ul>
-        <li>🎓 BBA IT (Information Technology) – Bachelor of Business Administration</li>
-        <li>🎓 MBA IT (Information Technology) – Master of Business Administration</li>
-        <li>🎓 Polytechnic Diploma in Artificial Intelligence & Machine Learning (AI/ML)</li>
-        <li>🎓 Polytechnic in Computer Science</li>
-        <li>🎓 PhD in Artificial Intelligence & Machine Learning – Pune University</li>
-    </ul>
-
-    <h2>📜 License</h2>
-    <p>📌 This project is licensed under the <strong>MIT License</strong>, making it free to use, modify, and distribute.</p>
-
-    <h2>🚀 Support Open Source!</h2>
-    <p>If you find this project useful, please ⭐ star the repository on GitHub.</p>
-
-    <h2>🔥 KeepActive Pro – Stay Online. Stay Productive.</h2>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
