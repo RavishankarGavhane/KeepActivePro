@@ -42,14 +42,14 @@ jobs:
 
       - name: Upload Windows Build
         if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # UPDATED to v4
         with:
           name: KeepActivePro-Windows
           path: dist/keep_active_pro.exe
 
       - name: Upload macOS Build
         if: matrix.os == 'macos-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # UPDATED to v4
         with:
           name: KeepActivePro-macOS
           path: dist/keep_active_pro.dmg
