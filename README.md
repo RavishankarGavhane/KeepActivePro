@@ -2,6 +2,12 @@ KeepActive Pro 🖥️
 
 🔥 Keep your system awake and Microsoft Teams online automatically!🚀 Stay active as per your defined duration with KeepActive Pro.
 
+# KeepActive Pro – Prevent System Sleep & Stay Online
+
+🚀 **Keep Microsoft Teams and Zoom active automatically!** No more "Away" status.
+Download for **Windows, macOS, Linux** for free.
+
+
 🌟 Introduction
 
 Are you tired of Microsoft Teams showing you as "Away" when you step away from your keyboard? Need to keep your PC awake during long meetings, downloads, or remote work sessions? KeepActive Pro is a lightweight yet powerful utility that ensures your system stays active for a user-defined duration.
@@ -46,11 +52,15 @@ Are you tired of Microsoft Teams showing you as "Away" when you step away from y
 
 📸 Screenshots & Demo
 
+file:///home/ravishankar/Pictures/Screenshots/Screenshot%20from%202025-02-22%2015-57-57.png
+![alt text](<Screenshot from 2025-02-22 15-58-20.png>)
 
 KeepActive Pro UI
 
 Animated Active Mode
 
+![alt text](<assets/20250222_1256_KeepActive Icon Reveal_simple_compose_01jmp8syjheza8a3kzx6kgs0pv.gif>)
+![alt text](<assets/20250222_1324_KeepActive Pro Icon_storyboard_01jmpach48esb93pmbbg0zvvqd.gif>)
 
 
 👨‍💻 Developed by
