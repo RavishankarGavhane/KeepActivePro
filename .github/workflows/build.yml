@@ -53,3 +53,10 @@ jobs:
         with:
           name: KeepActivePro-macOS
           path: dist/keep_active_pro.dmg
+
+      - name: Upload Linux Build (Optional)
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: KeepActivePro-Linux
+          path: dist/keep_active_pro.AppImage
