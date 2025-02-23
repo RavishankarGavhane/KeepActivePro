@@ -1,7 +1,10 @@
-name: Deploy Website to GitHub Pages
+name: Deploy Website (Main Branch)
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
@@ -13,18 +16,5 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Prepare Website Content
-        run: |
-          # Create a folder for the site
-          mkdir -p site/downloads
-          # Copy index.html and assets folder
-          cp index.html site/
-          cp -r assets site/
-          # Copy the VBScript file so users can download it directly
-          cp windows/KeepAwake.vbs site/downloads/KeepAwake.vbs
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: site
+      - name: Deployment Notice
+        run: echo "GitHub Pages is configured to deploy from the main branch. No additional deployment step is required."
