@@ -1,4 +1,4 @@
-name: Build KeepActivePro Executables
+name: Build and Deploy KeepActivePro
 
 on:
   push:
@@ -9,61 +9,92 @@ on:
       - main
 
 jobs:
-  build:
-    name: Build & Package KeepActivePro
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest, macos-latest]
-    
+  validate-and-deploy:
+    name: Validate Scripts & Deploy Website
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      # Checkout the repository
+      - name: Checkout code
         uses: actions/checkout@v3
-      
-      - name: Set up Python
-        uses: actions/setup-python@v4
+
+      # Validate Linux script syntax
+      - name: Validate Linux Script
+        run: bash -n Linux/keep_awake.sh
+
+      # Validate macOS script syntax
+      - name: Validate macOS Script
+        run: bash -n Mac/keep_awake.sh
+
+      # Verify Windows VBScript exists (no native syntax check available)
+      - name: Verify Windows VBScript
+        run: test -f Windows/KeepAwake.vbs
+
+      # Deploy website to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          python-version: "3.10"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          exclude_files: |
+            .github/**
+            Linux/**
+            Mac/**
+            Windows/**
+            .gitignore
+            LICENSE
+            README.md
 
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pyinstaller pyautogui pillow
+  release:
+    name: Create Release with Scripts
+    needs: validate-and-deploy
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'  # Only on push to main
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Build Executable (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          pyinstaller --onefile --windowed --add-data "assets;assets" src/keep_active_pro.py
-
-      - name: Build Executable (macOS)
-        if: matrix.os == 'macos-latest'
-        run: |
-          pyinstaller --onefile --windowed --add-data "assets:assets" src/keep_active_pro.py
-
-          # Create a directory to hold the .app file
-          mkdir -p dist/dmg_build
-          mv dist/keep_active_pro.app dist/dmg_build/
-
-          # Create a .dmg file from the .app bundle
-          hdiutil create -volname "KeepActivePro" -srcfolder dist/dmg_build -ov -format UDZO dist/keep_active_pro.dmg
-
-      - name: Upload Windows Build
-        if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v4  # UPDATED to v4
+      # Package scripts into a release
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: KeepActivePro-Windows
-          path: dist/keep_active_pro.exe
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          draft: false
+          prerelease: false
 
-      - name: Upload macOS Build
-        if: matrix.os == 'macos-latest'
-        uses: actions/upload-artifact@v4  # UPDATED to v4
+      # Upload Windows script
+      - name: Upload Windows Script
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: KeepActivePro-macOS
-          path: dist/keep_active_pro.dmg
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Windows/KeepAwake.vbs
+          asset_name: KeepAwake.vbs
+          asset_content_type: application/x-vbscript
 
-      - name: Upload Linux Build (Optional)
-        if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v4
+      # Upload Linux script
+      - name: Upload Linux Script
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: KeepActivePro-Linux
-          path: dist/keep_active_pro.AppImage
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Linux/keep_awake.sh
+          asset_name: keep_awake.sh
+          asset_content_type: application/x-sh
+
+      # Upload macOS script
+      - name: Upload macOS Script
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Mac/keep_awake.sh
+          asset_name: keep_awake.sh
+          asset_content_type: application/x-sh
