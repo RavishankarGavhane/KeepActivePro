@@ -1,4 +1,4 @@
-name: Validate and Release KeepAwake Script
+name: Build KeepActivePro Executable (Windows)
 
 on:
   push:
@@ -9,42 +9,29 @@ on:
       - main
 
 jobs:
-  validate:
-    name: Validate KeepAwake.vbs
-    runs-on: ubuntu-latest
+  build:
+    name: Build & Package KeepActivePro for Windows
+    runs-on: windows-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-
-      - name: Verify KeepAwake.vbs Exists
-        run: test -f windows/KeepAwake.vbs
-
-  release:
-    name: Create GitHub Release
-    needs: validate
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }} - KeepAwake Script
-          draft: false
-          prerelease: false
+          python-version: "3.10"
 
-      - name: Upload KeepAwake.vbs Script
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Build Executable (Windows)
+        run: |
+          pyinstaller --onefile --windowed --add-data "assets;assets" --add-data "windows/KeepAwake.vbs;windows" src/keep_active_pro.py
+
+      - name: Upload Windows Build
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: windows/KeepAwake.vbs
-          asset_name: KeepAwake.vbs
-          asset_content_type: application/x-vbscript
+          name: KeepActivePro-Windows
+          path: dist/keep_active_pro.exe
