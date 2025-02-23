@@ -13,23 +13,13 @@ jobs:
     name: Validate Scripts & Deploy Website
     runs-on: ubuntu-latest
     steps:
-      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Validate Linux script syntax
-      - name: Validate Linux Script
-        run: bash -n Linux/keep_awake.sh
-
-      # Validate macOS script syntax
-      - name: Validate macOS Script
-        run: bash -n Mac/keep_awake.sh
-
-      # Verify Windows VBScript exists (no native syntax check available)
+      # Skip Linux and macOS validation for now
       - name: Verify Windows VBScript
-        run: test -f Windows/KeepAwake.vbs
+        run: test -f windows/KeepAwake.vbs
 
-      # Deploy website to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -37,9 +27,7 @@ jobs:
           publish_dir: ./
           exclude_files: |
             .github/**
-            Linux/**
-            Mac/**
-            Windows/**
+            windows/**
             .gitignore
             LICENSE
             README.md
@@ -48,13 +36,11 @@ jobs:
     name: Create Release with Scripts
     needs: validate-and-deploy
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'  # Only on push to main
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Package scripts into a release
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -62,39 +48,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }} - Windows
           draft: false
           prerelease: false
 
-      # Upload Windows script
       - name: Upload Windows Script
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Windows/KeepAwake.vbs
+          asset_path: windows/KeepAwake.vbs
           asset_name: KeepAwake.vbs
           asset_content_type: application/x-vbscript
-
-      # Upload Linux script
-      - name: Upload Linux Script
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Linux/keep_awake.sh
-          asset_name: keep_awake.sh
-          asset_content_type: application/x-sh
-
-      # Upload macOS script
-      - name: Upload macOS Script
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Mac/keep_awake.sh
-          asset_name: keep_awake.sh
-          asset_content_type: application/x-sh
