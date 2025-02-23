@@ -1,36 +1,50 @@
-name: Deploy KeepActive Pro
+name: Validate and Release KeepAwake Script
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  deploy:
-    name: Deploy to GitHub Pages
+  validate:
+    name: Validate KeepAwake.vbs
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Deploy Static Site (index.html)
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          allow_empty_commit: true
+      - name: Verify KeepAwake.vbs Exists
+        run: test -f windows/KeepAwake.vbs
 
-  build-windows:
-    name: Package KeepAwake Script (Windows)
-    runs-on: windows-latest
-
+  release:
+    name: Create GitHub Release
+    needs: validate
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Upload Windows Script
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: KeepAwake-Windows
-          path: windows/KeepAwake.vbs
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }} - KeepAwake Script
+          draft: false
+          prerelease: false
+
+      - name: Upload KeepAwake.vbs Script
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: windows/KeepAwake.vbs
+          asset_name: KeepAwake.vbs
+          asset_content_type: application/x-vbscript
