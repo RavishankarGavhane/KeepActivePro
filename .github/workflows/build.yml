@@ -1,37 +1,30 @@
-name: Build KeepActivePro Executable (Windows)
+name: Deploy Website to GitHub Pages
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  build:
-    name: Build & Package KeepActivePro for Windows
-    runs-on: windows-latest
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
 
-      - name: Install Dependencies
+      - name: Prepare Website Content
         run: |
-          python -m pip install --upgrade pip
+          # Create a folder for the site
+          mkdir -p site/downloads
+          # Copy index.html and assets folder
+          cp index.html site/
+          cp -r assets site/
+          # Copy the VBScript file so users can download it directly
+          cp windows/KeepAwake.vbs site/downloads/KeepAwake.vbs
 
-      - name: Build Executable (Windows)
-        run: |
-          pyinstaller --onefile --windowed --add-data "assets;assets" --add-data "windows/KeepAwake.vbs;windows" src/keep_active_pro.py
-
-      - name: Upload Windows Build
-        uses: actions/upload-artifact@v4
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          name: KeepActivePro-Windows
-          path: dist/keep_active_pro.exe
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: site
