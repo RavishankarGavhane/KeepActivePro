@@ -4,9 +4,9 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 import os
 
-from fastapi_backend.database import get_db, init_db
-from fastapi_backend.models import ContactSubmission
 
+from .database import get_db, init_db
+from .models import ContactSubmission
 
 
 app = FastAPI(title="KeepActive Pro API", description="Backend for KeepActive Pro contact form")
