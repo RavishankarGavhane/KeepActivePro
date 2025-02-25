@@ -6,3 +6,39 @@ __pycache__/
 *.sh
 dist/
 build/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env
+.venv/
+
+# SQLAlchemy database files
+*.db
+*.sqlite3
+
+# Logs and system files
+logs/
+*.log
+*.pid
+*.swp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Git-related
+.git/
+*.orig
+
+# Python cache
+*.pyc
+*.pyo
+*.pyd
+
+# FastAPI specific
+instance/
