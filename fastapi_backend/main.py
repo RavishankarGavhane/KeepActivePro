@@ -1,47 +1,51 @@
-# fastapi_backend/main.py
-from fastapi import FastAPI, Form, Depends, HTTPException, Request
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI, Form, Depends, HTTPException
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-from .database import get_db, init_db
-from .models import ContactSubmission
 import os
+
+from .database import get_db, init_db
+from .models import ContactSubmission  # Import models correctly
 
 app = FastAPI(title="KeepActive Pro API", description="Backend for KeepActive Pro contact form")
 
 # Define paths
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(BASE_DIR)
-TEMPLATES_DIR = os.path.join(PROJECT_ROOT, "templates")
-ASSETS_DIR = os.path.join(PROJECT_ROOT, "assets")
-INDEX_FILE = os.path.join(PROJECT_ROOT, "index.html")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Backend directory
+PROJECT_ROOT = os.path.dirname(BASE_DIR)  # Main project directory
+TEMPLATES_DIR = os.path.join(PROJECT_ROOT, "templates")  # HTML files location
+ASSETS_DIR = os.path.join(PROJECT_ROOT, "assets")  # Static files location
+INDEX_FILE = os.path.join(PROJECT_ROOT, "index.html")  # Home page file
 
+# Mount static directories
+app.mount("/static", StaticFiles(directory=TEMPLATES_DIR), name="static")
 app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
-templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
+# Initialize database
 init_db()
 
+# Serve Home Page (index.html)
 @app.get("/", response_class=HTMLResponse)
 async def get_home_page():
-    try:
-        with open(INDEX_FILE, "r") as f:
-            return HTMLResponse(content=f.read())
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Home page not found")
+    return serve_html(INDEX_FILE, "Home page not found")
 
+# Serve Contact Page (contact.html)
 @app.get("/contact/", response_class=HTMLResponse)
-async def get_contact_page(request: Request):
-    return templates.TemplateResponse("contact.html", {"request": request})
+async def get_contact_page():
+    return serve_html(os.path.join(TEMPLATES_DIR, "contact.html"), "Contact page not found")
 
-@app.post("/contact/", response_class=HTMLResponse)
+# Serve Thank You Page (thankyou.html)
+@app.get("/thankyou.html", response_class=HTMLResponse)
+async def get_thank_you_page():
+    return serve_html(os.path.join(TEMPLATES_DIR, "thankyou.html"), "Thank you page not found")
+
+# Handle Contact Form Submission
+@app.post("/contact/", response_class=RedirectResponse)
 async def submit_contact_form(
-    request: Request,
-    first_name: str = Form(..., alias="FirstName"),
-    last_name: str = Form(..., alias="LastName"),
-    email: str = Form(..., alias="Email"),
-    phone_number: str = Form(..., alias="PhoneNumber"),
-    message: str = Form(..., alias="WHAT_DO_YOU_HAVE_IN_MIND"),
+    first_name: str = Form(...),
+    last_name: str = Form(...),
+    email: str = Form(...),
+    phone_number: str = Form(...),
+    message: str = Form(...),
     db: Session = Depends(get_db)
 ):
     try:
@@ -54,8 +58,15 @@ async def submit_contact_form(
         )
         db.add(submission)
         db.commit()
-        db.refresh(submission)
-        return templates.TemplateResponse("thankyou.html", {"request": request, "email": email})
+        return RedirectResponse(url="/thankyou.html", status_code=303)
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error saving submission: {str(e)}")
+
+# Serve HTML helper function
+def serve_html(file_path: str, error_message: str):
+    try:
+        with open(file_path, "r") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail=error_message)
