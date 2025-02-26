@@ -3,11 +3,10 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 import os
+from contextlib import asynccontextmanager
 
 from fastapi_backend.database import get_db, init_db
 from fastapi_backend.models import ContactSubmission
-
-app = FastAPI(title="KeepActive Pro API", description="Backend for KeepActive Pro contact form")
 
 # Define paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Backend directory
@@ -16,14 +15,24 @@ TEMPLATES_DIR = os.path.join(PROJECT_ROOT, "templates")  # HTML files location
 ASSETS_DIR = os.path.join(PROJECT_ROOT, "assets")  # Static files location
 INDEX_FILE = os.path.join(PROJECT_ROOT, "index.html")  # Home page file
 
+# Lifespan event for startup/shutdown
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("🚀 Initializing Database...")
+    init_db()  # Initialize database on startup
+    yield
+    print("🛑 Shutting down...")
+
+# Initialize FastAPI with lifespan handler
+app = FastAPI(
+    title="KeepActive Pro API",
+    description="Backend for KeepActive Pro contact form",
+    lifespan=lifespan,
+)
+
 # Mount static directories
 app.mount("/static", StaticFiles(directory=TEMPLATES_DIR), name="static")
 app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
-
-# Initialize database on startup
-@app.on_event("startup")
-def startup():
-    init_db()
 
 # Serve Home Page (index.html)
 @app.get("/", response_class=HTMLResponse)
