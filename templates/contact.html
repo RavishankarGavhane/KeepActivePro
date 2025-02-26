@@ -154,5 +154,15 @@
             window.location.href = '../templates/thankyou.html';
         });
     </script>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const redirectUrl = email ? 
+                `../templates/thankyou.html?email=${encodeURIComponent(email)}` : 
+                '../templates/thankyou.html';
+            window.location.href = redirectUrl;
+        });
+    </script>
 </body>
 </html>
