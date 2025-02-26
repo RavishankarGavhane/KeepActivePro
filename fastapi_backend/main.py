@@ -49,23 +49,23 @@ async def get_contact_page():
 async def get_thank_you_page():
     return serve_html(os.path.join(TEMPLATES_DIR, "thankyou.html"), "Thank you page not found")
 
-# Handle Contact Form Submission
+# Handle Contact Form Submission (with Corrected Field Names)
 @app.post("/contact/", response_class=RedirectResponse)
 async def submit_contact_form(
-    first_name: str = Form(...),
-    last_name: str = Form(...),
-    email: str = Form(...),
-    phone_number: str = Form(...),
-    message: str = Form(...),
+    FirstName: str = Form(...),  # Matches 'name="FirstName"' in HTML
+    LastName: str = Form(...),   # Matches 'name="LastName"' in HTML
+    Email: str = Form(...),      # Matches 'name="Email"' in HTML
+    PhoneNumber: str = Form(...),# Matches 'name="PhoneNumber"' in HTML
+    WHAT_DO_YOU_HAVE_IN_MIND: str = Form(...),  # Matches 'name="WHAT_DO_YOU_HAVE_IN_MIND"'
     db: Session = Depends(get_db)
 ):
     try:
         submission = ContactSubmission(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            phone_number=phone_number,
-            message=message
+            first_name=FirstName,
+            last_name=LastName,
+            email=Email,
+            phone_number=PhoneNumber,
+            message=WHAT_DO_YOU_HAVE_IN_MIND
         )
         db.add(submission)
         db.commit()
