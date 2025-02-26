@@ -227,17 +227,18 @@
         <!-- Email Display Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const userEmail = urlParams.get('email');
-            const emailElement = document.getElementById('userEmail');
-            
-            if (userEmail && emailElement) {
-                emailElement.textContent = decodeURIComponent(userEmail);
-            } else {
-                document.getElementById('thankyouMessage').textContent = 
-                    "We've received your message. Our team will get back to you shortly.";
-            }
-        });
+        const urlParams = new URLSearchParams(window.location.search);
+        const userEmail = urlParams.get('email');
+        const emailElement = document.getElementById('userEmail');
+        const emailMessageElement = document.getElementById('emailMessage'); // Fix: Correct ID
+
+        if (userEmail && emailElement) {
+            emailElement.textContent = decodeURIComponent(userEmail);
+        } else {
+            emailMessageElement.textContent = 
+                "We've received your message. Our team will get back to you shortly.";
+        }
+    });
     </script>
 
     <!-- Bootstrap JS -->
