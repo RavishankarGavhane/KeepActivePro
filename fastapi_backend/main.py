@@ -4,11 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 import os
 
-
 from fastapi_backend.database import get_db, init_db
 from fastapi_backend.models import ContactSubmission
-
-
 
 app = FastAPI(title="KeepActive Pro API", description="Backend for KeepActive Pro contact form")
 
@@ -23,8 +20,10 @@ INDEX_FILE = os.path.join(PROJECT_ROOT, "index.html")  # Home page file
 app.mount("/static", StaticFiles(directory=TEMPLATES_DIR), name="static")
 app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
 
-# Initialize database
-init_db()
+# Initialize database on startup
+@app.on_event("startup")
+def startup():
+    init_db()
 
 # Serve Home Page (index.html)
 @app.get("/", response_class=HTMLResponse)
