@@ -161,25 +161,16 @@
             window.location.href = '../templates/thankyou.html';
         });
     </script>
-    <!-- <script>
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const redirectUrl = email ? 
-                `../templates/thankyou.html?email=${encodeURIComponent(email)}` : 
-                '../templates/thankyou.html';
-            window.location.href = redirectUrl;
-        });
-    </script> -->
 
     <script>
         const form = document.getElementById('contactForm');
-        
+
         async function handleSubmit(event) {
             event.preventDefault();
             const submitBtn = event.target.querySelector('button[type="submit"]');
             const formData = new FormData(event.target);
-            
+            const email = formData.get('email'); // Get the email value from the form
+
             try {
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Sending...';
@@ -193,7 +184,8 @@
                 });
 
                 if (response.ok) {
-                    window.location.href = `../templates/thankyou.html?email=${encodeURIComponent(formData.get('email'))}`;
+                    // Redirect to thankyou.html with the email parameter
+                    window.location.href = `../templates/thankyou.html?email=${encodeURIComponent(email)}`;
                 } else {
                     alert('Error submitting form. Please try again.');
                 }
@@ -206,6 +198,7 @@
         }
 
         form.addEventListener('submit', handleSubmit);
+        
     </script>
 </body>
 </html>
