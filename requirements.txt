@@ -5,3 +5,4 @@ pydantic
 requests
 psycopg2-binary
 python-multipart
+jinja2
