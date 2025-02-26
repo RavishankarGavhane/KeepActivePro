@@ -100,30 +100,39 @@
         </div>
     </section>
 
-    <!-- Contact Form Section -->
+        <!-- Contact Form Section -->
     <section class="contact-section">
         <div class="container">
             <div class="contact-card">
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
-                        <form id="contactForm">
+                        <form id="contactForm" action="https://formspree.io/f/xldgyynr" method="POST">
                             <div class="row g-3">
+                                <!-- Add name attributes -->
                                 <div class="col-md-6">
                                     <label for="firstName" class="form-label">First Name</label>
-                                    <input type="text" class="form-control" id="firstName" required>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="lastName" class="form-label">Last Name</label>
-                                    <input type="text" class="form-control" id="lastName" required>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" required>
                                 </div>
                                 <div class="col-12">
                                     <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" required>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                <!-- Add phone number field -->
+                                <div class="col-12">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" 
+                                        pattern="[0-9]{10}" maxlength="10" required>
                                 </div>
                                 <div class="col-12">
                                     <label for="message" class="form-label">Message</label>
-                                    <textarea class="form-control" id="message" rows="4" required></textarea>
+                                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
                                 </div>
+                                <!-- Add redirect parameter -->
+                                <input type="hidden" name="_next" value="https://yourdomain.com/templates/thankyou.html">
                                 <div class="col-12 text-center">
                                     <button type="submit" class="btn btn-primary btn-lg">Submit</button>
                                 </div>
@@ -134,7 +143,7 @@
             </div>
         </div>
     </section>
-
+    
     <!-- Footer (matches index.html) -->
     <footer class="footer text-center">
         <div class="container">
