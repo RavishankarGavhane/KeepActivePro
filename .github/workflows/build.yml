@@ -1,20 +1,54 @@
-name: Deploy Website (Main Branch)
+name: Deploy to AWS
 
 on:
   push:
     branches:
-      - main
+      - main  # Runs deployment when pushing to the main branch
   pull_request:
     branches:
       - main
 
 jobs:
-  deploy:
+  deploy-frontend:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Deployment Notice
-        run: echo "GitHub Pages is configured to deploy from the main branch. No additional deployment step is required."
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1  
+
+      - name: Deploy Frontend to S3
+        run: |
+          aws s3 sync ./frontend s3://keepactivepro.com --delete
+          
+      - name: Invalidate CloudFront Cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id YOUR_CLOUDFRONT_ID --paths "/*"
+
+  deploy-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1  
+
+      - name: Install Dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt -t .
+          zip -r lambda_function.zip .
+
+      - name: Deploy to AWS Lambda
+        run: |
+          aws lambda update-function-code --function-name keepactivepro-api --zip-file fileb://backend/lambda_function.zip
