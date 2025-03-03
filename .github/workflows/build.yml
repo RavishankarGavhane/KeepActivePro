@@ -47,10 +47,19 @@ jobs:
 
       - name: Install Dependencies and Package Lambda Function
         run: |
-          pip install -r backend/requirements.txt -t backend/package/
+          mkdir -p backend/package
+          pip install --no-cache-dir --upgrade -r requirements.txt -t backend/package/
           cp -r templates backend/package/templates
           cd backend/package
           zip -r lambda_function.zip .
+
+      
+      - name: Verify Zip File Exists
+        run: |
+          if [ ! -f "backend/package/lambda_function.zip" ]; then
+            echo "Error: lambda_function.zip not found!"
+            exit 1
+          fi
 
       - name: Deploy to AWS Lambda
         run: |
