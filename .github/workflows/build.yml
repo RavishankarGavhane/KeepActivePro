@@ -24,10 +24,10 @@ jobs:
 
       - name: Deploy Frontend to S3
         run: |
-          aws s3 sync ./frontend s3://keepactivepro.com --delete
-          aws s3 cp /home/ravishankar/KeepActivePro/index.html s3://keepactivepro.com/
-          aws s3 cp --recursive /home/ravishankar/KeepActivePro/templates s3://keepactivepro.com/templates/
-
+          run: |
+          aws s3 sync ./frontend s3://keepactivepro.com --delete --region eu-north-1
+          aws s3 cp index.html s3://keepactivepro.com/ --region eu-north-1
+          aws s3 cp --recursive templates s3://keepactivepro.com/templates/ --region eu-north-1
           
       - name: Invalidate CloudFront Cache
         run: |
