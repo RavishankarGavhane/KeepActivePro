@@ -22,13 +22,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-north-1  
 
-      - name: Ensure Required Directories Exist
-        run: |
-          if [ ! -d "./assets" ] || [ ! -d "./templates" ]; then
-            echo "Error: Required frontend directories do not exist!"
-            exit 1
-          fi
-
       - name: Deploy Frontend to S3
         run: |
           aws s3 sync ./assets s3://keepactivepro.com/assets/ --delete --region eu-north-1
@@ -54,11 +47,11 @@ jobs:
 
       - name: Install Dependencies and Package Lambda Function
         run: |
-          cd backend
-          pip install -r requirements.txt -t .
-          cp -r ../templates ./templates
+          pip install -r backend/requirements.txt -t backend/package/
+          cp -r templates backend/package/templates
+          cd backend/package
           zip -r lambda_function.zip .
 
       - name: Deploy to AWS Lambda
         run: |
-          aws lambda update-function-code --function-name keepactivepro-api --zip-file fileb://backend/lambda_function.zip --region eu-north-1
+          aws lambda update-function-code --function-name keepactivepro-api --zip-file fileb://backend/package/lambda_function.zip --region eu-north-1
