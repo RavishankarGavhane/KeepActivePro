@@ -3,7 +3,7 @@ name: Deploy to AWS
 on:
   push:
     branches:
-      - main  # Runs deployment when pushing to the main branch
+      - main  
   pull_request:
     branches:
       - main
@@ -25,6 +25,9 @@ jobs:
       - name: Deploy Frontend to S3
         run: |
           aws s3 sync ./frontend s3://keepactivepro.com --delete
+          aws s3 cp /home/ravishankar/KeepActivePro/index.html s3://keepactivepro.com/
+          aws s3 cp --recursive /home/ravishankar/KeepActivePro/templates s3://keepactivepro.com/templates/
+
           
       - name: Invalidate CloudFront Cache
         run: |
@@ -45,9 +48,11 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd backend
-          pip install -r requirements.txt -t .
-          zip -r lambda_function.zip .
+            cd backend
+            pip install -r requirements.txt -t .
+            cp -r /home/ravishankar/KeepActivePro/templates ./templates
+            zip -r lambda_function.zip .
+      
 
       - name: Deploy to AWS Lambda
         run: |
