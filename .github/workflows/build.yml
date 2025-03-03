@@ -53,14 +53,7 @@ jobs:
           cd backend/package
           zip -r lambda_function.zip .
 
-      
-      - name: Verify Zip File Exists
-        run: |
-          if [ ! -f "backend/package/lambda_function.zip" ]; then
-            echo "Error: lambda_function.zip not found!"
-            exit 1
-          fi
 
-      - name: Deploy to AWS Lambda
+      - name: Skip Backend Deployment
         run: |
-          aws lambda update-function-code --function-name keepactivepro-api --zip-file fileb://backend/package/lambda_function.zip --region eu-north-1
+          echo "Skipping AWS Lambda deployment because the function does not exist."
