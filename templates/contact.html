@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
-        /* All styles from index.html */
         body {
             font-family: 'Inter', sans-serif;
             color: #333;
@@ -24,6 +23,20 @@
             background: linear-gradient(135deg, #6a11cb, #2575fc);
             color: white;
             padding: 100px 0;
+        }
+        .contact-section {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+        .contact-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+        .form-control:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 0.25rem rgba(106, 17, 203, 0.25);
         }
         .footer {
             background: #343a40;
@@ -47,45 +60,30 @@
         .btn-primary:hover {
             background: #2575fc;
         }
-
-        /* Contact Form Specific Styles */
-        .contact-section {
-            padding: 80px 0;
-            background: #f8f9fa;
-        }
-        .contact-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-        }
-        .form-control:focus {
-            border-color: #6a11cb;
-            box-shadow: 0 0 0 0.25rem rgba(106, 17, 203, 0.25);
-        }
     </style>
 </head>
 <body>
-    <!-- Navigation Bar (matches index.html) -->
+
+    <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="../index.html">KeepActive Pro</a>
+            <a class="navbar-brand" href="/">KeepActive Pro</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="../index.html#features">Features</a>
+                        <a class="nav-link" href="/#features">Features</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="../index.html#download">Download</a>
+                        <a class="nav-link" href="/#download">Download</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="../index.html#about">About</a>
+                        <a class="nav-link" href="/#about">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="contact.html">Contact</a>
+                        <a class="nav-link active" href="/contact/">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -93,44 +91,42 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container text-center">
-            <h1 class="display-4">Contact Us</h1>
-            <p class="lead">Have questions or feedback? We'd love to hear from you!</p>
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4">Contact Us 📬</h1>
+            <p class="lead">Have questions or need support? Reach out to us—we’re here to help!</p>
         </div>
     </section>
 
-      <!-- Contact Form Section -->
+    <!-- Contact Form Section (Exact Match to Your Provided Code) -->
     <section class="contact-section">
         <div class="container">
             <div class="contact-card">
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
-                        <form id="contactForm" action="https://formspree.io/f/xldgyynr" method="POST">
+                        <form id="contactForm" method="POST">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="firstName" class="form-label">First Name</label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" required>
+                                    <input type="text" class="form-control" id="firstName" name="FirstName" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="lastName" class="form-label">Last Name</label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" required>
+                                    <input type="text" class="form-control" id="lastName" name="LastName" required>
                                 </div>
                                 <div class="col-12">
                                     <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <input type="email" class="form-control" id="email" name="Email" required>
                                 </div>
                                 <div class="col-12">
                                     <label for="phone" class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" 
-                                           pattern="[0-9]{10}" maxlength="10" required>
+                                    <input type="tel" class="form-control" id="phone" name="PhoneNumber"
+                                        pattern="[0-9]{10}" maxlength="10" required>
                                 </div>
                                 <div class="col-12">
                                     <label for="message" class="form-label">Message</label>
-                                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                                    <textarea class="form-control" id="message" name="WHAT_DO_YOU_HAVE_IN_MIND" rows="4" required></textarea>
                                 </div>
-                                <input type="hidden" name="_next" 
-                                       value="https://ravishankargavhane.github.io/KeepActivePro/templates/thankyou.html">
                                 <div class="col-12 text-center">
                                     <button type="submit" class="btn btn-primary btn-lg">Submit</button>
                                 </div>
@@ -141,8 +137,8 @@
             </div>
         </div>
     </section>
-    
-    <!-- Footer (matches index.html) -->
+
+    <!-- Footer (Matches Your Provided Code) -->
     <footer class="footer text-center">
         <div class="container">
             <p>🚀 Support Open Source! If you find this project useful, please ⭐ star the repository on <a href="https://github.com/RavishankarGavhane/KeepActivePro" target="_blank">GitHub</a>.</p>
@@ -152,53 +148,89 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- EmailJS & Form Submission Script -->
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script>
-        // Initialize EmailJS
-        emailjs.init({
-            publicKey: 'O80bPRb0qGtoniY5A',
-        });
+        emailjs.init({ publicKey: 'O80bPRb0qGtoniY5A' });
 
-        const form = document.getElementById('contactForm');
-        
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = form.querySelector('button[type="submit"]');
+        document.getElementById('contactForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const form = event.target;
             const formData = new FormData(form);
-            
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
+
             try {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
+                console.log("Submitting form data to FastAPI...");
 
-        
-                // Send notification to YOURSELF
-                await emailjs.send(
-                    'service_sh24gky',
-                    'template_b8i1amb',
-                    {
-                        first_name: formData.get('firstName'),
-                        last_name: formData.get('lastName'),
-                        from_email: formData.get('email'),
-                        phone: formData.get('phone'),
-                        message: formData.get('message'),
-                        date: new Date().toLocaleDateString('en-IN'), // Indian format DD/MM/YYYY
+                // 1️⃣ Send Data to FastAPI (Database Storage)
+                const fastapiResponse = await fetch('/contact/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!fastapiResponse.ok) {
+                    const errorText = await fastapiResponse.text();
+                    console.error("FastAPI Error Response:", errorText);
+                    throw new Error('FastAPI submission failed: ' + errorText);
+                }
+
+                console.log("FastAPI Submission Success!");
+
+                // 2️⃣ Send Notification via EmailJS
+                try {
+                    console.log("Sending Email via EmailJS...");
+                    await emailjs.send('service_sh24gky', 'template_b8i1amb', {
+                        first_name: formData.get('FirstName'),
+                        last_name: formData.get('LastName'),
+                        from_email: formData.get('Email'),
+                        phone: formData.get('PhoneNumber'),
+                        message: formData.get('WHAT_DO_YOU_HAVE_IN_MIND'),
+                        date: new Date().toLocaleDateString('en-IN'),
                         time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
-                    }
-                );
+                    });
+                    console.log("EmailJS Success!");
+                } catch (emailJSError) {
+                    console.error("EmailJS Failed:", emailJSError);
+                }
 
-                // Redirect after both emails are sent
-                window.location.href = `thankyou.html?email=${encodeURIComponent(formData.get('email'))}`;
+                // 3️⃣ Send Data to Formspree (Backup Notification)
+                try {
+                    console.log("Sending Backup Data to Formspree...");
+                    const formspreeResponse = await fetch('https://formspree.io/f/xldgyynr', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!formspreeResponse.ok) {
+                        const formspreeErrorText = await formspreeResponse.text();
+                        console.error("Formspree Error Response:", formspreeErrorText);
+                        throw new Error('Formspree submission failed: ' + formspreeErrorText);
+                    }
+
+                    console.log("Formspree Submission Success!");
+                } catch (formspreeError) {
+                    console.error("Formspree Failed:", formspreeError);
+                }
+
+                // 4️⃣ Redirect to Thank You Page
+                console.log("Redirecting to Thank You Page...");
+                window.location.href = '/thankyou/?email=' + encodeURIComponent(formData.get('Email'));
 
             } catch (error) {
-                console.error('Error:', error);
-                alert('Message received! You may get confirmation email shortly.');
+                console.error('Submission failed:', error);
+                alert("There was an issue submitting the form. Please check the console for details.");
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'Submit';
             }
         });
+
     </script>
+
 </body>
 </html>

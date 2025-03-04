@@ -45,15 +45,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-north-1  
 
-      - name: Install Dependencies and Package Lambda Function
+      - name: Install Dependencies and Package FastAPI for Lambda
         run: |
           mkdir -p backend/package
-          pip install --no-cache-dir --upgrade -r requirements.txt -t backend/package/
-          cp -r templates backend/package/templates
+          pip install --no-cache-dir --upgrade -r backend/requirements.txt -t backend/package/
+          cp backend/main.py backend/package/
+          cp backend/models.py backend/package/
+          cp backend/database.py backend/package/
           cd backend/package
-          zip -r lambda_function.zip .
+          zip -r fastapi_lambda.zip .
 
-
-      - name: Skip Backend Deployment
+      - name: Deploy to AWS Lambda
         run: |
-          echo "Skipping AWS Lambda deployment because the function does not exist."
+          aws lambda update-function-code --function-name KeepActiveProBackend --zip-file fileb://backend/package/fastapi_lambda.zip
