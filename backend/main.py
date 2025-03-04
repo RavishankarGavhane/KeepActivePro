@@ -144,6 +144,14 @@ async def log_requests(request: Request, call_next):
     response = await call_next(request)
     return response
 
+import json
+
+def lambda_handler(event, context):
+    # TODO implement
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Hello from Lambda!')
+    }
 
 #Run FastAPI Server
 if __name__ == "__main__":
