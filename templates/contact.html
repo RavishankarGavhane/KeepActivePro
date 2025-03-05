@@ -167,10 +167,11 @@
         try {
             console.log("Submitting form data to FastAPI...");
 
-            // 1️⃣ Send Data to FastAPI (Database Storage)
-            const fastapiResponse = await fetch('/contact/', {
+            // 1️⃣ Send Data to FastAPI via API Gateway
+            const fastapiResponse = await fetch('https://6rjvysehl1.execute-api.eu-north-1.amazonaws.com/KeepActiveProBackend/contact', {
                 method: 'POST',
-                body: formData
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(formData))
             });
 
             if (!fastapiResponse.ok) {
@@ -198,7 +199,7 @@
                 console.error("EmailJS Failed:", emailJSError);
             }
 
-            // 3️⃣ Redirect to Thank You Page (Modify this if your file is inside /templates/)
+            // 3️⃣ Redirect to Thank You Page
             console.log("Redirecting to Thank You Page...");
             window.location.href = '/templates/thankyou.html?email=' + encodeURIComponent(formData.get('Email'));
 
@@ -210,7 +211,6 @@
             submitBtn.innerHTML = 'Submit';
         }
     });
-
 
     </script>
 
