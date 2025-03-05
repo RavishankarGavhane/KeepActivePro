@@ -43,7 +43,8 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-south-1  
+          # aws-region: us-east-1
+          aws-region: eu-north-1
 
       - name: Install Dependencies and Package FastAPI for Lambda
         run: |
@@ -58,3 +59,4 @@ jobs:
       - name: Deploy to AWS Lambda
         run: |
           aws lambda update-function-code --function-name KeepActiveProBackend --zip-file fileb://backend/package/fastapi_lambda.zip
+
