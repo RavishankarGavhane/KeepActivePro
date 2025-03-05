@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from backend.models import ContactSubmission
 from backend.database import init_db, get_db
 from mangum import Mangum  
+from fastapi.middleware.cors import CORSMiddleware
 
 
 
@@ -41,6 +42,15 @@ app = FastAPI(
     openapi_url="/openapi.json"
 )
 
+
+# Add CORS Middleware (After defining app)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://www.keepactivepro.com"],  # Your website domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # Mount Static Files
@@ -149,10 +159,6 @@ async def log_requests(request: Request, call_next):
     response = await call_next(request)
     return response
 
-
-@app.get("/test")
-def read_test():
-    return{"message": "API is working well"}
 
 
 # Use Mangum to wrap FastAPI for AWS Lambda
