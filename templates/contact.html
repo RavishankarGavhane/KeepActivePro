@@ -156,79 +156,61 @@
         emailjs.init({ publicKey: 'O80bPRb0qGtoniY5A' });
 
         document.getElementById('contactForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent default form submission
+        event.preventDefault(); // Prevent default form submission
 
-            const form = event.target;
-            const formData = new FormData(form);
-            const submitBtn = form.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
+        const form = event.target;
+        const formData = new FormData(form);
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
 
-            try {
-                console.log("Submitting form data to FastAPI...");
+        try {
+            console.log("Submitting form data to FastAPI...");
 
-                // 1️⃣ Send Data to FastAPI (Database Storage)
-                const fastapiResponse = await fetch('/contact/', {
-                    method: 'POST',
-                    body: formData
-                });
+            // 1️⃣ Send Data to FastAPI (Database Storage)
+            const fastapiResponse = await fetch('/contact/', {
+                method: 'POST',
+                body: formData
+            });
 
-                if (!fastapiResponse.ok) {
-                    const errorText = await fastapiResponse.text();
-                    console.error("FastAPI Error Response:", errorText);
-                    throw new Error('FastAPI submission failed: ' + errorText);
-                }
-
-                console.log("FastAPI Submission Success!");
-
-                // 2️⃣ Send Notification via EmailJS
-                try {
-                    console.log("Sending Email via EmailJS...");
-                    await emailjs.send('service_sh24gky', 'template_b8i1amb', {
-                        first_name: formData.get('FirstName'),
-                        last_name: formData.get('LastName'),
-                        from_email: formData.get('Email'),
-                        phone: formData.get('PhoneNumber'),
-                        message: formData.get('WHAT_DO_YOU_HAVE_IN_MIND'),
-                        date: new Date().toLocaleDateString('en-IN'),
-                        time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
-                    });
-                    console.log("EmailJS Success!");
-                } catch (emailJSError) {
-                    console.error("EmailJS Failed:", emailJSError);
-                }
-
-                // 3️⃣ Send Data to Formspree (Backup Notification)
-                try {
-                    console.log("Sending Backup Data to Formspree...");
-                    const formspreeResponse = await fetch('https://formspree.io/f/xldgyynr', {
-                        method: 'POST',
-                        body: formData
-                    });
-
-                    if (!formspreeResponse.ok) {
-                        const formspreeErrorText = await formspreeResponse.text();
-                        console.error("Formspree Error Response:", formspreeErrorText);
-                        throw new Error('Formspree submission failed: ' + formspreeErrorText);
-                    }
-
-                    console.log("Formspree Submission Success!");
-                } catch (formspreeError) {
-                    console.error("Formspree Failed:", formspreeError);
-                }
-
-                // 4️⃣ Redirect to Thank You Page
-                console.log("Redirecting to Thank You Page...");
-                window.location.href = '/thankyou/?email=' + encodeURIComponent(formData.get('Email'));
-
-            } catch (error) {
-                console.error('Submission failed:', error);
-                alert("There was an issue submitting the form. Please check the console for details.");
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Submit';
+            if (!fastapiResponse.ok) {
+                const errorText = await fastapiResponse.text();
+                console.error("FastAPI Error Response:", errorText);
+                throw new Error('FastAPI submission failed: ' + errorText);
             }
-        });
+
+            console.log("FastAPI Submission Success!");
+
+            // 2️⃣ Send Notification via EmailJS
+            try {
+                console.log("Sending Email via EmailJS...");
+                await emailjs.send('service_sh24gky', 'template_b8i1amb', {
+                    first_name: formData.get('FirstName'),
+                    last_name: formData.get('LastName'),
+                    from_email: formData.get('Email'),
+                    phone: formData.get('PhoneNumber'),
+                    message: formData.get('WHAT_DO_YOU_HAVE_IN_MIND'),
+                    date: new Date().toLocaleDateString('en-IN'),
+                    time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+                });
+                console.log("EmailJS Success!");
+            } catch (emailJSError) {
+                console.error("EmailJS Failed:", emailJSError);
+            }
+
+            // 3️⃣ Redirect to Thank You Page (Modify this if your file is inside /templates/)
+            console.log("Redirecting to Thank You Page...");
+            window.location.href = '/templates/thankyou.html?email=' + encodeURIComponent(formData.get('Email'));
+
+        } catch (error) {
+            console.error('Submission failed:', error);
+            alert("There was an issue submitting the form. Please check the console for details.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Submit';
+        }
+    });
+
 
     </script>
 
