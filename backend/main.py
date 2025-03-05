@@ -150,9 +150,7 @@ async def log_requests(request: Request, call_next):
     return response
 
 
-@app.get("/test")
-def read_test():
-    return{"message": "API is working well"}
+
 
 
 # Use Mangum to wrap FastAPI for AWS Lambda
