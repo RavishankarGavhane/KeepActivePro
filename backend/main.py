@@ -8,7 +8,9 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from backend.models import ContactSubmission
 from backend.database import init_db, get_db
-from mangum import Mangum  # ✅ Import Mangum for AWS Lambda support
+from mangum import Mangum  
+
+
 
 # Configure Logging
 logging.basicConfig(
@@ -18,12 +20,16 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
+
 # Application Configuration
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # backend/
 PROJECT_ROOT = os.path.dirname(BASE_DIR)  # KeepActivePro/
 TEMPLATES_DIR = os.path.join(PROJECT_ROOT, "templates")  
 STATIC_DIR = os.path.join(PROJECT_ROOT, "assets")  
 INDEX_PATH = os.path.join(PROJECT_ROOT, "index.html")  
+
+
 
 # Initialize FastAPI App
 app = FastAPI(
@@ -35,17 +41,25 @@ app = FastAPI(
     openapi_url="/openapi.json"
 )
 
+
+
 # Mount Static Files
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
+
+
 # Initialize Templates
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
+
+
 
 # Initialize Database on Startup
 @app.on_event("startup")
 async def startup_event():
     init_db()
     logger.info("Database initialized successfully")
+
+
 
 # Dependency for Database Session
 def get_db_session(db: Session = Depends(get_db)):
@@ -54,16 +68,22 @@ def get_db_session(db: Session = Depends(get_db)):
     finally:
         db.close()
 
+
+
 # **Home Page Route - Serve `index.html` from Root**
 @app.get("/", response_class=HTMLResponse, summary="Serve the homepage")
 async def read_root():
     logger.info("Serving index.html from root endpoint")
     return FileResponse(INDEX_PATH)
 
+
+
 @app.get("/contact/", response_class=HTMLResponse, summary="Render contact form page")
 async def get_contact_form(request: Request):
     logger.info("Rendering contact form page")
     return templates.TemplateResponse("contact.html", {"request": request})  
+
+
 
 @app.post("/contact/", response_class=HTMLResponse, summary="Handle contact form submission")
 async def submit_contact_form(
@@ -98,6 +118,8 @@ async def submit_contact_form(
             detail="An error occurred while processing your submission."
         )
 
+
+
 @app.get("/thankyou/", response_class=HTMLResponse, summary="Render thank you page")
 async def get_thank_you(request: Request):
     logger.info("Attempting to render thankyou.html")
@@ -106,6 +128,8 @@ async def get_thank_you(request: Request):
     except Exception as e:
         logger.error(f"Failed to load thankyou.html: {str(e)}")
         return HTMLResponse(content="Error loading thankyou.html", status_code=500)
+
+
 
 # Exception Handler for Generic Errors
 @app.exception_handler(HTTPException)
@@ -117,6 +141,7 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         status_code=exc.status_code
     )
 
+
 # Middleware for Logging Requests
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
@@ -124,8 +149,10 @@ async def log_requests(request: Request, call_next):
     response = await call_next(request)
     return response
 
-# ✅ Use Mangum to wrap FastAPI for AWS Lambda
+
+# Use Mangum to wrap FastAPI for AWS Lambda
 lambda_handler = Mangum(app)
+
 
 # Run FastAPI Server (Only needed for local development)
 if __name__ == "__main__":
