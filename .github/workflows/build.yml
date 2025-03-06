@@ -46,12 +46,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-north-1
 
+      - name: Update AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+          aws --version
+
       - name: Build Lambda Package
         run: |
-          # Create package directory structure
           mkdir -p backend/package
-
-          # Install dependencies using AWS Lambda Python 3.9 image
+          
           docker run --rm --entrypoint /bin/bash \
             -v $(pwd):/var/task \
             public.ecr.aws/lambda/python:3.9 \
@@ -62,22 +67,17 @@ jobs:
               cp /var/task/backend/*.py /var/task/backend/package/ && \
               mv /var/task/backend/package/main.py /var/task/backend/package/lambda_function.py"
 
-          # Create deployment package
           cd backend/package
           zip -r9 ../fastapi_lambda.zip .
-
-          # Quick verification of zip contents
-          echo "Zip file contents:"
+          echo "Zip contents:"
           unzip -l ../fastapi_lambda.zip | head -n 10
 
       - name: Deploy Lambda Function
         run: |
-          # Update Lambda function code
           aws lambda update-function-code \
             --function-name KeepActiveProBackend \
             --zip-file fileb://backend/fastapi_lambda.zip
 
-          # Configure Lambda settings
           aws lambda update-function-configuration \
             --function-name KeepActiveProBackend \
             --handler lambda_function.lambda_handler \
@@ -85,27 +85,17 @@ jobs:
             --architectures x86_64 \
             --memory-size 512 \
             --timeout 30 \
-            --environment "Variables={
-              DB_USER=ravipostgres,
-              DB_PASSWORD=Ravi#1234,
-              DB_HOST=keepactivepro-db.ct8akq62elqa.eu-north-1.rds.amazonaws.com,
-              DB_NAME=postgres,
-              DB_PORT=5432
-            }"
+            --environment "Variables={DB_USER=ravipostgres,DB_PASSWORD=Ravi#1234,DB_HOST=keepactivepro-db.ct8akq62elqa.eu-north-1.rds.amazonaws.com,DB_NAME=postgres,DB_PORT=5432}"
 
       - name: Configure API Gateway
         run: |
-          # Get API ID
           API_ID=$(aws apigateway get-rest-apis --query "items[?name=='KeepActiveProAPI'].id" --output text)
           
-          # Enable CORS
           aws apigateway update-gateway-response \
             --rest-api-id $API_ID \
             --response-type DEFAULT_4XX \
-            --patch-operations \
-              op=replace,path=/responseParameters/gatewayresponse.header.Access-Control-Allow-Origin,value='*'
+            --patch-operations op=replace,path=/responseParameters/gatewayresponse.header.Access-Control-Allow-Origin,value='*'
 
-          # Deploy to production stage
           aws apigateway create-deployment \
             --rest-api-id $API_ID \
             --stage-name prod
