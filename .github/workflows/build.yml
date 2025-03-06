@@ -1,61 +1,32 @@
-name: Deploy to AWS
+deploy-backend:
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
 
-on:
-  push:
-    branches:
-      - main  
-  pull_request:
-    branches:
-      - main
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-north-1
 
-jobs:
-  deploy-frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-north-1  
-
-      - name: Deploy Frontend to S3
-        run: |
-          aws s3 sync ./assets s3://keepactivepro-eu-north-1/assets/ --delete --region eu-north-1
-          aws s3 cp ./index.html s3://keepactivepro-eu-north-1/ --region eu-north-1
-          aws s3 cp --recursive ./templates s3://keepactivepro-eu-north-1/templates/ --region eu-north-1
-          
-      - name: Invalidate CloudFront Cache
-        run: |
-          aws cloudfront create-invalidation --distribution-id E1QOO5RD2GS5KC --paths "/*"
-
-  deploy-backend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-north-1
-
-      - name: Install Dependencies and Package FastAPI for Lambda
-        run: |
+    - name: Build Lambda Package
+      run: |
+        docker run --rm -v $(pwd):/app -w /app public.ecr.aws/lambda/python:3.8 /bin/bash -c "
           mkdir -p backend/package
           pip install --no-cache-dir --upgrade -r backend/requirements.txt -t backend/package/
-          cp backend/main.py backend/package/
-          cp backend/models.py backend/package/
-          cp backend/database.py backend/package/
-          mv backend/package/main.py backend/package/lambda_function.py  # Rename main.py to lambda_function.py
+          mkdir -p backend/package/backend
+          cp backend/*.py backend/package/backend/
+          mv backend/package/backend/main.py backend/package/backend/lambda_function.py
           cd backend/package
-          zip -r fastapi_lambda.zip .
+          zip -r ../fastapi_lambda.zip .
+        "
 
-      - name: Deploy to AWS Lambda
-        run: |
-          aws lambda update-function-code --function-name KeepActiveProBackend --zip-file fileb://backend/package/fastapi_lambda.zip
+    - name: Deploy to AWS Lambda
+      run: |
+        aws lambda update-function-code --function-name KeepActiveProBackend --zip-file fileb://backend/fastapi_lambda.zip
+
+    - name: Update Lambda Handler
+      run: |
+        aws lambda update-function-configuration --function-name KeepActiveProBackend --handler backend.lambda_function.lambda_handler
