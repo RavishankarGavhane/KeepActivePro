@@ -1,32 +1,105 @@
-deploy-backend:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+name: Deploy KeepActive Pro
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-north-1
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-    - name: Build Lambda Package
-      run: |
-        docker run --rm -v $(pwd):/app -w /app public.ecr.aws/lambda/python:3.8 /bin/bash -c "
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Deploy Frontend to S3
+        run: |
+          aws s3 sync ./assets s3://keepactivepro-eu-north-1/assets/ --delete
+          aws s3 cp ./index.html s3://keepactivepro-eu-north-1/
+          aws s3 cp --recursive ./templates s3://keepactivepro-eu-north-1/templates/
+
+      - name: Invalidate CloudFront Cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id E1QOO5RD2GS5KC --paths "/*"
+
+  deploy-backend:
+    runs-on: ubuntu-latest
+    needs: deploy-frontend
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Build Lambda Package
+        run: |
+          # Create necessary directories
           mkdir -p backend/package
-          pip install --no-cache-dir --upgrade -r backend/requirements.txt -t backend/package/
-          mkdir -p backend/package/backend
-          cp backend/*.py backend/package/backend/
-          mv backend/package/backend/main.py backend/package/backend/lambda_function.py
+
+          # Install dependencies with Linux-compatible binaries
+          docker run --rm -v $(pwd):/var/task \
+            lambci/lambda:build-python3.9 \
+            bash -c "
+              pip install \
+              --platform manylinux2014_x86_64 \
+              --target /var/task/backend/package \
+              --implementation cp \
+              --python-version 3.9 \
+              --only-binary=:all: \
+              -r /var/task/backend/requirements.txt
+            "
+
+          # Copy application files to package directory
+          cp backend/*.py backend/package/
+
+          # Rename main.py to lambda_function.py
+          mv backend/package/main.py backend/package/lambda_function.py
+
+          # Zip package contents
           cd backend/package
-          zip -r ../fastapi_lambda.zip .
-        "
+          zip -r9 ../fastapi_lambda.zip .
 
-    - name: Deploy to AWS Lambda
-      run: |
-        aws lambda update-function-code --function-name KeepActiveProBackend --zip-file fileb://backend/fastapi_lambda.zip
+      - name: Deploy to AWS Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name KeepActiveProBackend \
+            --zip-file fileb://backend/fastapi_lambda.zip
 
-    - name: Update Lambda Handler
-      run: |
-        aws lambda update-function-configuration --function-name KeepActiveProBackend --handler backend.lambda_function.lambda_handler
+      - name: Configure Lambda Settings
+        run: |
+          aws lambda update-function-configuration \
+            --function-name KeepActiveProBackend \
+            --handler lambda_function.lambda_handler \
+            --environment "Variables={DB_USER=ravipostgres,DB_PASSWORD=Ravi#1234,DB_HOST=keepactivepro-db.ct8akq62elqa.eu-north-1.rds.amazonaws.com,DB_NAME=postgres,DB_PORT=5432}" \
+            --memory-size 512 \
+            --timeout 30
+
+      - name: Update API Gateway Integration
+        run: |
+          # Get API ID from existing resources
+          API_ID=$(aws apigateway get-rest-apis --query "items[?name=='KeepActiveProAPI'].id" --output text)
+          
+          # Create deployment
+          aws apigateway create-deployment \
+            --rest-api-id $API_ID \
+            --stage-name prod
