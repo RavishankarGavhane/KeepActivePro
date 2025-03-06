@@ -1,9 +1,9 @@
-name: Deploy KeepActive Pro
+name: Deploy to AWS
 
 on:
   push:
     branches:
-      - main
+      - main  
   pull_request:
     branches:
       - main
@@ -20,23 +20,22 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-north-1
+          aws-region: eu-north-1  
 
-      - name: Deploy Static Assets to S3
+      - name: Deploy Frontend to S3
         run: |
-          aws s3 sync ./assets s3://keepactivepro-eu-north-1/assets/ --delete
-          aws s3 cp ./index.html s3://keepactivepro-eu-north-1/
-          aws s3 cp --recursive ./templates s3://keepactivepro-eu-north-1/templates/
-
+          aws s3 sync ./assets s3://keepactivepro-eu-north-1/assets/ --delete --region eu-north-1
+          aws s3 cp ./index.html s3://keepactivepro-eu-north-1/ --region eu-north-1
+          aws s3 cp --recursive ./templates s3://keepactivepro-eu-north-1/templates/ --region eu-north-1
+          
       - name: Invalidate CloudFront Cache
         run: |
           aws cloudfront create-invalidation --distribution-id E1QOO5RD2GS5KC --paths "/*"
 
   deploy-backend:
     runs-on: ubuntu-latest
-    needs: deploy-frontend
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
       - name: Configure AWS Credentials
@@ -46,56 +45,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-north-1
 
-      - name: Update AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install --update
-          aws --version
-
-      - name: Build Lambda Package
+      - name: Install Dependencies and Package FastAPI for Lambda
         run: |
           mkdir -p backend/package
-          
-          docker run --rm --entrypoint /bin/bash \
-            -v $(pwd):/var/task \
-            public.ecr.aws/lambda/python:3.9 \
-            -c "\
-              pip install --no-cache-dir \
-                -r /var/task/backend/requirements.txt \
-                -t /var/task/backend/package && \
-              cp /var/task/backend/*.py /var/task/backend/package/ && \
-              mv /var/task/backend/package/main.py /var/task/backend/package/lambda_function.py"
-
+          pip install --no-cache-dir --upgrade -r backend/requirements.txt -t backend/package/
+          cp backend/main.py backend/package/
+          cp backend/models.py backend/package/
+          cp backend/database.py backend/package/
+          mv backend/package/main.py backend/package/lambda_function.py  # Rename main.py to lambda_function.py
           cd backend/package
-          zip -r9 ../fastapi_lambda.zip .
-          echo "Zip contents:"
-          unzip -l ../fastapi_lambda.zip | head -n 10
+          zip -r fastapi_lambda.zip .
 
-      - name: Deploy Lambda Function
+      - name: Deploy to AWS Lambda
         run: |
-          aws lambda update-function-code \
-            --function-name KeepActiveProBackend \
-            --zip-file fileb://backend/fastapi_lambda.zip
-
-          aws lambda update-function-configuration \
-            --function-name KeepActiveProBackend \
-            --handler lambda_function.lambda_handler \
-            --runtime python3.9 \
-            --architectures x86_64 \
-            --memory-size 512 \
-            --timeout 30 \
-            --environment "Variables={DB_USER=ravipostgres,DB_PASSWORD=Ravi#1234,DB_HOST=keepactivepro-db.ct8akq62elqa.eu-north-1.rds.amazonaws.com,DB_NAME=postgres,DB_PORT=5432}"
-
-      - name: Configure API Gateway
-        run: |
-          API_ID=$(aws apigateway get-rest-apis --query "items[?name=='KeepActiveProAPI'].id" --output text)
-          
-          aws apigateway update-gateway-response \
-            --rest-api-id $API_ID \
-            --response-type DEFAULT_4XX \
-            --patch-operations op=replace,path=/responseParameters/gatewayresponse.header.Access-Control-Allow-Origin,value='*'
-
-          aws apigateway create-deployment \
-            --rest-api-id $API_ID \
-            --stage-name prod
+          aws lambda update-function-code --function-name KeepActiveProBackend --zip-file fileb://backend/package/fastapi_lambda.zip
