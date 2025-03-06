@@ -9,7 +9,9 @@ from backend.models import ContactSubmission
 from backend.database import init_db, get_db
 from mangum import Mangum  
 from fastapi.middleware.cors import CORSMiddleware
-
+import psycopg2
+from psycopg2 import pool
+import os
 
 
 
@@ -79,6 +81,26 @@ def get_db_session(db: Session = Depends(get_db)):
         yield db
     finally:
         db.close()
+
+
+
+# Use connection pool to reuse connections
+db_pool = psycopg2.pool.SimpleConnectionPool(
+    minconn=1,
+    maxconn=5,
+    user=os.getenv("DB_USER", "ravipostgres"),
+    password=os.getenv("DB_PASSWORD", "Ravi#1234"),
+    host=os.getenv("DB_HOST", "keepactivepro-db.ct8akq62elqa.eu-north-1.rds.amazonaws.com"),
+    database=os.getenv("DB_NAME", "postgres"),
+    port=os.getenv("DB_PORT", "5432")
+)
+
+def get_db_connection():
+    try:
+        return db_pool.getconn()
+    except Exception as e:
+        print("Error getting DB connection:", str(e))
+        return None
 
 
 
