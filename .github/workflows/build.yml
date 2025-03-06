@@ -52,10 +52,10 @@ jobs:
           cp backend/main.py backend/package/
           cp backend/models.py backend/package/
           cp backend/database.py backend/package/
+          mv backend/package/main.py backend/package/lambda_function.py  # Rename main.py to lambda_function.py
           cd backend/package
           zip -r fastapi_lambda.zip .
 
       - name: Deploy to AWS Lambda
         run: |
           aws lambda update-function-code --function-name KeepActiveProBackend --zip-file fileb://backend/package/fastapi_lambda.zip
-
