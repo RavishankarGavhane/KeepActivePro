@@ -1,7 +1,6 @@
 import os
 import logging
-from typing import Optional
-from fastapi import FastAPI, Form, Depends, HTTPException, Request, status
+from fastapi import FastAPI, Form, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -10,6 +9,7 @@ from backend.models import ContactSubmission
 from backend.database import init_db, get_db
 from mangum import Mangum  
 from fastapi.middleware.cors import CORSMiddleware
+
 
 
 
@@ -43,14 +43,16 @@ app = FastAPI(
 )
 
 
-# Add CORS Middleware (After defining app)
+
+# Add CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://www.keepactivepro.com"],  # Your website domain
+    allow_origins=["https://www.keepactivepro.com"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 
 # Mount Static Files
@@ -65,7 +67,7 @@ templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 # Initialize Database on Startup
 @app.on_event("startup")
-async def startup_event():
+def startup_event():
     init_db()
     logger.info("Database initialized successfully")
 
@@ -124,7 +126,7 @@ async def submit_contact_form(
         db.rollback()
         logger.error(f"Failed to save submission: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=500,
             detail="An error occurred while processing your submission."
         )
 
@@ -152,6 +154,7 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     )
 
 
+
 # Middleware for Logging Requests
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
@@ -161,8 +164,45 @@ async def log_requests(request: Request, call_next):
 
 
 
+# ✅ Test Endpoint to Check API Status
+@app.get("/test", response_class=HTMLResponse, summary="Test API")
+def read_test():
+    return {"message": "API is working well"}
+
+
+
+# ✅ New API Endpoints for Different Functionalities
+@app.post("/feedback/", summary="Submit Feedback Form")
+async def submit_feedback_form(
+    request: Request,
+    name: str = Form(..., alias="Name"),
+    email: str = Form(..., alias="Email"),
+    feedback: str = Form(..., alias="Feedback"),
+    db: Session = Depends(get_db_session)
+):
+    logger.info(f"Received feedback from {email}")
+    try:
+        submission = ContactSubmission(
+            first_name=name,
+            last_name="",
+            email=email,
+            phone_number="",
+            message=feedback
+        )
+        db.add(submission)
+        db.commit()
+        db.refresh(submission)
+        return {"message": "Feedback submitted successfully!"}
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Failed to save feedback: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error processing the request")
+
+
+
 # Use Mangum to wrap FastAPI for AWS Lambda
 lambda_handler = Mangum(app)
+
 
 
 # Run FastAPI Server (Only needed for local development)
