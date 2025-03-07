@@ -332,5 +332,35 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+
+    <!-- Counter Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Visit Counter
+            let visitCount = parseInt(localStorage.getItem('visitCount')) || 0;
+            visitCount++;
+            localStorage.setItem('visitCount', visitCount);
+
+            // Download Counter
+            let downloadCount = parseInt(localStorage.getItem('downloadCount')) || 0;
+
+            // Update counters display
+            const countersElement = document.querySelector('.counters');
+            if (countersElement) {
+                countersElement.innerHTML = `🚀 Client Visits: ${visitCount} | Downloads: ${downloadCount}`;
+            }
+
+            // Track download button clicks
+            document.querySelectorAll('#download a[download]').forEach(link => {
+                link.addEventListener('click', function() {
+                    downloadCount = parseInt(localStorage.getItem('downloadCount')) || 0;
+                    downloadCount++;
+                    localStorage.setItem('downloadCount', downloadCount);
+                    countersElement.innerHTML = `🚀 Client Visits: ${visitCount} | Downloads: ${downloadCount}`;
+                });
+            });
+        });
+    </script>
 </body>
 </html>
