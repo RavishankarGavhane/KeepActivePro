@@ -1,39 +1,52 @@
-  deploy-backend:
-    name: Deploy Backend (AWS Lambda)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+deploy-backend:
+  name: Deploy Backend (AWS Lambda)
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-north-1
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-north-1
 
-      - name: Install Dependencies and Package FastAPI for Lambda
-        run: |
-          # Create a deployment package directory
-          mkdir -p backend/package
+    - name: Set Up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'  # Match the Lambda runtime version
 
-          # Install dependencies inside package/
-          pip install --no-cache-dir --upgrade -r backend/requirements.txt -t backend/package/
+    - name: Install Dependencies in Lambda-Compatible Environment
+      run: |
+        # Use Docker to install dependencies in a Lambda-compatible environment
+        docker run -v $(pwd):/var/task -it amazonlinux:2 /bin/bash -c "
+          yum update -y &&
+          yum install -y python3.8 &&
+          python3.8 -m ensurepip &&
+          pip3.8 install --upgrade pip &&
+          pip3.8 install --no-cache-dir --upgrade -r /var/task/backend/requirements.txt -t /var/task/backend/package/
+        "
 
-          # Verify `pydantic` and `pydantic_core` are installed
-          ls -l backend/package/pydantic* || true
+    - name: Verify Dependencies
+      run: |
+        # Verify `pydantic` and `pydantic_core` are installed
+        ls -l backend/package/pydantic* || true
 
-          # Copy all backend files
-          cp -r backend/*.py backend/package/
-          cp -r backend/models.py backend/package/
-          cp -r backend/database.py backend/package/
-          cp -r backend/metrics_handler.py backend/package/
-          cp -r frontend backend/package/frontend  # If frontend files are needed
+    - name: Copy Backend Files
+      run: |
+        # Copy only necessary backend files
+        cp -r backend/*.py backend/package/
+        cp -r backend/models.py backend/package/
+        cp -r backend/database.py backend/package/
+        cp -r backend/metrics_handler.py backend/package/
 
-          # Navigate to package directory and zip everything
-          cd backend/package
-          zip -r fastapi_lambda.zip .
+    - name: Create Deployment Package
+      run: |
+        # Navigate to package directory and zip everything
+        cd backend/package
+        zip -r fastapi_lambda.zip .
 
-      - name: Deploy to AWS Lambda
-        run: |
-          aws lambda update-function-code --function-name KeepActiveProBackend --zip-file fileb://backend/package/fastapi_lambda.zip
+    - name: Deploy to AWS Lambda
+      run: |
+        aws lambda update-function-code --function-name KeepActiveProBackend --zip-file fileb://backend/package/fastapi_lambda.zip
