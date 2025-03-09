@@ -12,14 +12,8 @@ deploy-backend:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-north-1
 
-    - name: Set Up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.8'  # Match the Lambda runtime version
-
     - name: Install Dependencies in Lambda-Compatible Environment
       run: |
-        # Use Docker to install dependencies in a Lambda-compatible environment
         docker run -v $(pwd):/var/task -it amazonlinux:2 /bin/bash -c "
           yum update -y &&
           yum install -y python3.8 &&
@@ -30,12 +24,10 @@ deploy-backend:
 
     - name: Verify Dependencies
       run: |
-        # Verify `pydantic` and `pydantic_core` are installed
         ls -l backend/package/pydantic* || true
 
     - name: Copy Backend Files
       run: |
-        # Copy only necessary backend files
         cp -r backend/*.py backend/package/
         cp -r backend/models.py backend/package/
         cp -r backend/database.py backend/package/
@@ -43,7 +35,6 @@ deploy-backend:
 
     - name: Create Deployment Package
       run: |
-        # Navigate to package directory and zip everything
         cd backend/package
         zip -r fastapi_lambda.zip .
 

@@ -12,7 +12,7 @@ psycopg2/__pycache__/sql.cpython-310.pyc,,
 psycopg2/__pycache__/tz.cpython-310.pyc,,
 psycopg2/_ipaddress.py,sha256=jkuyhLgqUGRBcLNWDM8QJysV6q1Npc_RYH4_kE7JZPU,2922
 psycopg2/_json.py,sha256=XPn4PnzbTg1Dcqz7n1JMv5dKhB5VFV6834GEtxSawt0,7153
-psycopg2/_psycopg.cpython-310-x86_64-linux-gnu.so,sha256=jsbHyHsGsrCtEVjanqAuIuEzPUZp_lYAsIj4qAczszw,335049
+psycopg2/_psycopg.cpython-39-x86_64-linux-gnu.so,sha256=sj51h6p4RUeA5kA68kAwWMpA2SIBLE3kSavAqhI6_Mo,335065
 psycopg2/_range.py,sha256=sXeenGraJEEw2I3mc8RlmNivy2jMg7zWoanDes2Ywp8,18494
 psycopg2/errorcodes.py,sha256=ko0m0I294B6tb60GAu_gqvoVykqf6cyrGM7MLj4p0Qg,14392
 psycopg2/errors.py,sha256=aAS4dJyTg1bsDzJDCRQAMB_s7zv-Q4yB6Yvih26I-0M,1425
@@ -26,7 +26,7 @@ psycopg2_binary-2.9.10.dist-info/LICENSE,sha256=lhS4XfyacsWyyjMUTB1-HtOxwpdFnZ-y
 psycopg2_binary-2.9.10.dist-info/METADATA,sha256=nKflg_fOjsZqIxaJEFDyyzl0I8YNcHuEN4WrM68RG5E,4924
 psycopg2_binary-2.9.10.dist-info/RECORD,,
 psycopg2_binary-2.9.10.dist-info/REQUESTED,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
-psycopg2_binary-2.9.10.dist-info/WHEEL,sha256=VXRyidHovicsPXAYYBPK-lnsPgFrrhXkyzySBEhHzcg,151
+psycopg2_binary-2.9.10.dist-info/WHEEL,sha256=W4xB4__7ua2KDA1Pwqrfy49EMv6S-WFCpe5dlbjycHQ,147
 psycopg2_binary-2.9.10.dist-info/top_level.txt,sha256=7dHGpLqQ3w-vGmGEVn-7uK90qU9fyrGdWWi7S-gTcnM,9
 psycopg2_binary.libs/libcom_err-2abe824b.so.2.1,sha256=VCbctU3QHJ7t2gXiF58ORxFOi0ilNP_p6UkW55Rxslc,17497
 psycopg2_binary.libs/libcrypto-ea28cefb.so.1.1,sha256=BaFxOxGMaqri29sHgDiXm9wGdC2M_5O7F734mZJBUJk,3133185
