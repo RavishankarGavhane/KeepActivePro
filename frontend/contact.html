@@ -161,7 +161,7 @@
         emailjs.init({ publicKey: 'O80bPRb0qGtoniY5A' });
     
         document.getElementById('contactForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault(); // ✅ Prevent default form submission
 
             const form = event.target;
             const formData = new FormData(form);
@@ -169,10 +169,7 @@
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
 
-            let formSubmissionSuccess = false;
-
             try {
-                // ✅ Send email notification via EmailJS
                 console.log("📧 Sending Email via EmailJS...");
                 await emailjs.send('service_sh24gky', 'template_b8i1amb', {
                     first_name: formData.get('FirstName'),
@@ -189,37 +186,31 @@
             }
 
             try {
-                // ✅ Send Data to FastAPI backend
-                console.log("📡 Submitting form to backend...");
-                const response = await fetch('/contact/', {
+                console.log("📡 Submitting form to FastAPI backend...");
+                const response = await fetch('https://api.keepactivepro.com/contact/', { // ✅ Update to correct API URL
                     method: 'POST',
                     body: formData
                 });
 
-                console.log("Backend Response:", response); // Log the response
-                console.log("Response Status:", response.status); // Log the status code
-                console.log("Response OK:", response.ok); // Log whether the response is OK
-
                 if (response.ok) {
                     console.log("✅ Form submitted successfully!");
-                    formSubmissionSuccess = true;
+
+                    // ✅ Store email securely in session storage
+                    sessionStorage.setItem('userEmail', formData.get('Email'));
+
+                    // ✅ Redirect to Thank You page (S3 hosted)
+                    window.location.href = "thankyou.html";
                 } else {
-                    console.error("❌ Form submission failed.");
+                    console.error("❌ Form submission failed:", response.statusText);
+                    alert("❌ Something went wrong. Please try again.");
                 }
             } catch (error) {
-                console.error("❌ Error submitting form:", error);
-            }
-
-            // ✅ Redirect to Thank You page (only if submission was successful)
-            if (formSubmissionSuccess) {
-                console.log("➡️ Redirecting to Thank You page...");
-                window.location.href = "http://keepactivepro-eu-north-1.s3-website.eu-north-1.amazonaws.com/thankyou.html";
-            } else {
+                console.error("❌ Error:", error);
                 alert("❌ Something went wrong. Please try again.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Submit';
             }
-
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Submit';
         });
     </script>
     </body>
