@@ -22,7 +22,7 @@ jobs:
 
       - name: Deploy Frontend to S3 (Keep Folder Structure)
         run: |
-          aws s3 sync ./frontend s3://keepactivepro-eu-north-1/ --delete --region eu-north-1
+          aws s3 sync ./frontend s3://keepactivepro-eu-north-1/frontend/ --delete --region eu-north-1
           
       - name: Invalidate CloudFront Cache
         run: |
@@ -44,13 +44,22 @@ jobs:
 
       - name: Install Dependencies and Package FastAPI for Lambda
         run: |
+          # Create the package directory
           mkdir -p backend/package
+
+          # Install Python dependencies into package
           pip install --no-cache-dir --upgrade -r backend/requirements.txt -t backend/package/
+
+          # Copy all backend files into the package
           cp -r backend/*.py backend/package/
           cp -r backend/models.py backend/package/
           cp -r backend/database.py backend/package/
           cp -r backend/metrics_handler.py backend/package/
-          cp -r frontend backend/package/frontend # ✅ Keep frontend folder in the Lambda package
+
+          # Copy the frontend folder inside the backend package (for Lambda to serve static files)
+          cp -r frontend backend/package/frontend 
+
+          # Navigate to package directory and zip everything
           cd backend/package
           zip -r fastapi_lambda.zip . 
 
