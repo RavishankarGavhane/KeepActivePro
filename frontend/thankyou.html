@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="OlMLf3tRmMOOs4c0sX94r_I2_rJInaagh_rcCFQ8bZI" />
+    <title>Thank You - KeepActive Pro</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Contact Form CSS (reused for consistency) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800&display=swap">
+    <style>
+        /* Reuse index.html and contact.html styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+        }
+        .footer {
+            background: #343a40;
+            color: white;
+            padding: 40px 0;
+        }
+        .footer a {
+            color: #6a11cb;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            color: #2575fc;
+        }
+
+        /* Thank You Page Styles (mirroring contact.html) */
+        .thankyou-section * {
+            font-family: Nunito, sans-serif;
+        }
+        .thankyou-section .text-blk {
+            margin: 0;
+            line-height: 25px;
+        }
+        .thankyou-section .responsive-container-block {
+            min-height: 75px;
+            height: fit-content;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            margin: 0 auto 50px;
+            padding: 0;
+        }
+        .thankyou-section .responsive-container-block.big-container {
+            padding: 10px 30px;
+            position: relative;
+            height: auto;
+        }
+        .thankyou-section .responsive-container-block.container {
+            position: static;
+            min-height: 75px;
+            flex-direction: column;
+            z-index: 2;
+            max-width: 800px;
+            margin: 120px auto 50px;
+        }
+        .thankyou-section .container-block.thankyou-wrapper {
+            background-color: white;
+            max-width: 799px;
+            text-align: center;
+            padding: 50px 40px;
+            box-shadow: rgba(0, 0, 0, 0.05) 0px 4px 20px 7px;
+            border-radius: 6px;
+            margin: 0 auto;
+        }
+        .thankyou-section .text-blk.thankyou-head {
+            font-size: 36px;
+            line-height: 50px;
+            font-weight: 900;
+            color: #03a9f4;
+        }
+        .thankyou-section .text-blk.thankyou-subhead {
+            color: #9c9c9c;
+            margin-bottom: 20px;
+        }
+        .thankyou-section .text-blk.email-display {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .thankyou-section .email {
+            font-weight: bold;
+            color: #2575fc;
+        }
+        .thankyou-section .btn-back {
+            width: 200px;
+            background-color: #03a9f4;
+            height: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            line-height: 50px;
+        }
+        .thankyou-section .btn-back:hover {
+            background-color: #0381fe;
+        }
+        .thankyou-section .social-media-links {
+            width: 250px;
+            display: flex;
+            justify-content: space-evenly;
+            margin: 50px auto 0;
+        }
+        .thankyou-section .link-img {
+            width: 30px;
+            height: 30px;
+        }
+        .thankyou-section .blueBG {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+            height: 300px;
+            background-color: #03a9f4;
+        }
+
+        /* Responsive Adjustments (mirroring contact.html) */
+        @media (max-width: 768px) {
+            .thankyou-section .responsive-container-block.container {
+                margin-top: 80px;
+            }
+            .thankyou-section .text-blk.thankyou-head {
+                font-size: 30px;
+                line-height: 40px;
+            }
+            .thankyou-section .btn-back {
+                width: 100%;
+            }
+        }
+        @media (max-width: 500px) {
+            .thankyou-section .container-block.thankyou-wrapper {
+                padding: 50px 15px;
+            }
+            .thankyou-section .text-blk.thankyou-head {
+                font-size: 26px;
+                line-height: 34px;
+            }
+            .thankyou-section .text-blk.email-display {
+                font-size: 16px;
+            }
+            .thankyou-section .responsive-container-block.big-container {
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">KeepActive Pro</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#download">Download</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/contact/">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Thank You Section -->
+    <div class="thankyou-section">
+        <div class="responsive-container-block big-container">
+            <div class="blueBG"></div>
+            <div class="responsive-container-block container">
+                <div class="container-block thankyou-wrapper">
+                    <p class="text-blk thankyou-head">Thank You!</p>
+                    <p class="text-blk thankyou-subhead">Your submission has been successfully received.</p>
+                    <p class="text-blk email-display">We’ve received your message from <span class="email" id="userEmail"></span>. Our team will get back to you soon!</p>
+                    <p class="text-blk email-display" id="emailMessage"></p>
+                    <a href="contact.html" class="btn-back">Back to Contact Form</a>
+                    <div class="social-media-links">
+                        <a href="https://twitter.com" target="_blank">
+                            <img class="link-img" src="https://workik-widget-assets.s3.amazonaws.com/Footer1-83/v1/images/Icon-twitter.png" alt="Twitter">
+                        </a>
+                        <a href="https://facebook.com" target="_blank">
+                            <img class="link-img" src="https://workik-widget-assets.s3.amazonaws.com/Footer1-83/v1/images/Icon-facebook.png" alt="Facebook">
+                        </a>
+                        <a href="https://google.com" target="_blank">
+                            <img class="link-img" src="https://workik-widget-assets.s3.amazonaws.com/Footer1-83/v1/images/Icon-google.png" alt="Google">
+                        </a>
+                        <a href="https://instagram.com" target="_blank">
+                            <img class="link-img" src="https://workik-widget-assets.s3.amazonaws.com/Footer1-83/v1/images/Icon-instagram.png" alt="Instagram">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer (consistent with contact.html) -->
+    <footer class="footer text-center">
+        <div class="container">
+            <p>🚀 Support Open Source! If you find this project useful, please ⭐ star the repository on <a href="https://github.com/RavishankarGavhane/KeepActivePro" target="_blank">GitHub</a>.</p>
+            <p>🔥 KeepActive Pro – Stay Online. Stay Productive.</p>
+        </div>
+    </footer>
+
+        <!-- Email Display Script -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // ✅ Get the email from session storage
+                const userEmail = sessionStorage.getItem('userEmail');
+                const emailElement = document.getElementById('userEmail');
+        
+                if (userEmail && emailElement) {
+                    emailElement.textContent = userEmail; // Show email in the UI
+                } else {
+                    emailElement.textContent = "We've received your message. Our team will get back to you shortly.";
+                }
+            });
+        </script>
+        
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

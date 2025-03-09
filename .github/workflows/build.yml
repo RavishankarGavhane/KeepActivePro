@@ -10,6 +10,7 @@ on:
 
 jobs:
   deploy-frontend:
+    name: Deploy Frontend (S3 + CloudFront)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -24,15 +25,14 @@ jobs:
 
       - name: Deploy Frontend to S3
         run: |
-          aws s3 sync ./assets s3://keepactivepro-eu-north-1/assets/ --delete --region eu-north-1
-          aws s3 cp ./index.html s3://keepactivepro-eu-north-1/ --region eu-north-1
-          aws s3 cp --recursive ./templates s3://keepactivepro-eu-north-1/templates/ --region eu-north-1
+          aws s3 sync ./frontend s3://keepactivepro-eu-north-1/ --delete --region eu-north-1
           
       - name: Invalidate CloudFront Cache
         run: |
           aws cloudfront create-invalidation --distribution-id E1QOO5RD2GS5KC --paths "/*"
 
   deploy-backend:
+    name: Deploy Backend (AWS Lambda)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -49,12 +49,9 @@ jobs:
         run: |
           mkdir -p backend/package
           pip install --no-cache-dir --upgrade -r backend/requirements.txt -t backend/package/
-          cp backend/main.py backend/package/
-          cp backend/models.py backend/package/
-          cp backend/database.py backend/package/
-          mv backend/package/main.py backend/package/lambda_function.py  # Rename main.py to lambda_function.py
+          cp backend/*.py backend/package/
           cd backend/package
-          zip -r fastapi_lambda.zip .
+          zip -r fastapi_lambda.zip . 
 
       - name: Deploy to AWS Lambda
         run: |
