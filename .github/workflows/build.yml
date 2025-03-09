@@ -20,7 +20,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-north-1  
 
-      - name: Deploy Frontend to S3
+      - name: Deploy Frontend to S3 (Keep Folder Structure)
         run: |
           aws s3 sync ./frontend s3://keepactivepro-eu-north-1/ --delete --region eu-north-1
           
@@ -50,6 +50,7 @@ jobs:
           cp -r backend/models.py backend/package/
           cp -r backend/database.py backend/package/
           cp -r backend/metrics_handler.py backend/package/
+          cp -r frontend backend/package/frontend # ✅ Keep frontend folder in the Lambda package
           cd backend/package
           zip -r fastapi_lambda.zip . 
 
