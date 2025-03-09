@@ -159,16 +159,18 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script>
         emailjs.init({ publicKey: 'O80bPRb0qGtoniY5A' });
-
+    
         document.getElementById('contactForm').addEventListener('submit', async function(event) {
             event.preventDefault(); // Prevent default form submission
-
+    
             const form = event.target;
             const formData = new FormData(form);
             const submitBtn = form.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
-
+    
+            let formSubmissionSuccess = false;
+    
             try {
                 // ✅ Send email notification via EmailJS
                 console.log("📧 Sending Email via EmailJS...");
@@ -185,33 +187,37 @@
             } catch (emailJSError) {
                 console.error("❌ EmailJS Failed:", emailJSError);
             }
-
+    
             try {
                 // ✅ Send Data to FastAPI backend
+                console.log("📡 Submitting form to backend...");
                 const response = await fetch('/contact/', {
                     method: 'POST',
                     body: formData
                 });
-
+    
                 if (response.ok) {
                     console.log("✅ Form submitted successfully!");
-
-                    // ✅ Store email securely in session storage
-                    sessionStorage.setItem('userEmail', formData.get('Email'));
-
-                    // ✅ Redirect to Thank You page (without email in URL)
-                    window.location.href = "/thankyou/";
+                    formSubmissionSuccess = true;
                 } else {
                     console.error("❌ Form submission failed.");
                 }
             } catch (error) {
-                console.error("❌ Error:", error);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Submit';
+                console.error("❌ Error submitting form:", error);
             }
+    
+            // ✅ Redirect to Thank You page (only if submission was successful)
+            if (formSubmissionSuccess) {
+                console.log("➡️ Redirecting to Thank You page...");
+                sessionStorage.setItem('formSubmitted', 'true');
+                window.location.href = "/thankyou.html";
+            } else {
+                alert("❌ Something went wrong. Please try again.");
+            }
+    
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Submit';
         });
     </script>
-    
     </body>
     </html>

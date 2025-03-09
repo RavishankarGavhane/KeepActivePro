@@ -230,14 +230,18 @@
                 // ✅ Get the email from session storage
                 const userEmail = sessionStorage.getItem('userEmail');
                 const emailElement = document.getElementById('userEmail');
-        
+
                 if (userEmail && emailElement) {
-                    emailElement.textContent = userEmail; // Show email in the UI
+                    emailElement.textContent = userEmail; // ✅ Show email in the UI
                 } else {
                     emailElement.textContent = "We've received your message. Our team will get back to you shortly.";
                 }
+
+                // ✅ Clear email from session storage to prevent reuse on refresh
+                sessionStorage.removeItem('userEmail');
             });
         </script>
+
         
     
     <!-- Bootstrap JS -->
