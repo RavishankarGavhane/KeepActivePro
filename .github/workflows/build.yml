@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main  
-  pull_request:
-    branches:
-      - main
 
 jobs:
   deploy-frontend:
@@ -49,7 +46,10 @@ jobs:
         run: |
           mkdir -p backend/package
           pip install --no-cache-dir --upgrade -r backend/requirements.txt -t backend/package/
-          cp backend/*.py backend/package/
+          cp -r backend/*.py backend/package/
+          cp -r backend/models.py backend/package/
+          cp -r backend/database.py backend/package/
+          cp -r backend/metrics_handler.py backend/package/
           cd backend/package
           zip -r fastapi_lambda.zip . 
 
