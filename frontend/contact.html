@@ -156,10 +156,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- ✅ EmailJS for Notifications -->
+    <!-- ✅ EmailJS for Notifications -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script>
         emailjs.init({ publicKey: 'O80bPRb0qGtoniY5A' });
-    
+
         document.getElementById('contactForm').addEventListener('submit', async function(event) {
             event.preventDefault(); // ✅ Prevent default form submission
 
@@ -181,31 +182,14 @@
                     time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
                 });
                 console.log("✅ EmailJS Success!");
+
+                // ✅ Store email securely in session storage
+                sessionStorage.setItem('userEmail', formData.get('Email'));
+
+                // ✅ Redirect to Thank You page (S3 hosted)
+                window.location.href = "thankyou.html";
             } catch (emailJSError) {
                 console.error("❌ EmailJS Failed:", emailJSError);
-            }
-
-            try {
-                console.log("📡 Submitting form to FastAPI backend...");
-                const response = await fetch('https://api.keepactivepro.com/contact/', { // ✅ Update to correct API URL
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (response.ok) {
-                    console.log("✅ Form submitted successfully!");
-
-                    // ✅ Store email securely in session storage
-                    sessionStorage.setItem('userEmail', formData.get('Email'));
-
-                    // ✅ Redirect to Thank You page (S3 hosted)
-                    window.location.href = "thankyou.html";
-                } else {
-                    console.error("❌ Form submission failed:", response.statusText);
-                    alert("❌ Something went wrong. Please try again.");
-                }
-            } catch (error) {
-                console.error("❌ Error:", error);
                 alert("❌ Something went wrong. Please try again.");
             } finally {
                 submitBtn.disabled = false;
