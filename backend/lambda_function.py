@@ -43,7 +43,7 @@ app = FastAPI(
 # Add CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://www.keepactivepro.com"],  # Allow website domain
+    allow_origins=["https://www.keepactivepro.com", "http://keepactivepro-eu-north-1.s3-website.eu-north-1.amazonaws.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
