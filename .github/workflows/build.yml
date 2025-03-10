@@ -55,7 +55,7 @@ jobs:
 
       - name: Sync Frontend Files to S3
         run: |
-          aws s3 sync frontend/ s3://keepactivepro.com/ --delete
+          aws s3 sync frontend/ s3://keepactivepro-eu-north-1/ --delete
 
       - name: Invalidate CloudFront Cache (Ensure New Content Loads)
         run: |
