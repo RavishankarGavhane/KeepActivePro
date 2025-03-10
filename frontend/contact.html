@@ -186,7 +186,7 @@
                 sessionStorage.setItem('userEmail', formData.get('Email'));
 
                 // ✅ Redirect to Thank You page (S3 hosted)
-                window.location.href = "thankyou.html";
+                window.location.href = "/thankyou/";
             } catch (emailJSError) {
                 console.error("❌ EmailJS Failed:", emailJSError);
                 alert("❌ Something went wrong. Please try again.");

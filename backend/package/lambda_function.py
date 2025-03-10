@@ -76,6 +76,13 @@ def get_db_session(db: Session = Depends(get_db)):
         db.close()
 
 
+def lambda_handler(event, context):
+    # Your Lambda function logic here
+    return {
+        "statusCode": 200,
+        "body": "Hello from Lambda!"
+    }
+
 # Serve Homepage
 @app.get("/", response_class=HTMLResponse, summary="Serve homepage")
 async def read_root():

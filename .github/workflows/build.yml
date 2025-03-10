@@ -1,43 +1,62 @@
-deploy-backend:
-  name: Deploy Backend (AWS Lambda)
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+name: Deploy KeepActivePro (Backend & Frontend)
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-north-1
+on:
+  push:
+    branches:
+      - main  # Adjust if using a different branch
 
-    - name: Install Dependencies in Lambda-Compatible Environment
-      run: |
-        docker run -v $(pwd):/var/task -it amazonlinux:2 /bin/bash -c "
-          yum update -y &&
-          yum install -y python3.8 &&
-          python3.8 -m ensurepip &&
-          pip3.8 install --upgrade pip &&
-          pip3.8 install --no-cache-dir --upgrade -r /var/task/backend/requirements.txt -t /var/task/backend/package/
-        "
+jobs:
+  deploy-backend:
+    name: Deploy Backend (AWS Lambda)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Verify Dependencies
-      run: |
-        ls -l backend/package/pydantic* || true
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
 
-    - name: Copy Backend Files
-      run: |
-        cp -r backend/*.py backend/package/
-        cp -r backend/models.py backend/package/
-        cp -r backend/database.py backend/package/
-        cp -r backend/metrics_handler.py backend/package/
+      - name: Install Dependencies in Lambda-Compatible Environment
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install --platform manylinux2014_x86_64 --implementation cp --python-version 3.10 --only-binary=:all: -t backend/package/ pydantic
+          pip install --no-cache-dir -r backend/requirements.txt -t backend/package/
 
-    - name: Create Deployment Package
-      run: |
-        cd backend/package
-        zip -r fastapi_lambda.zip .
+      - name: Copy Backend Files
+        run: |
+          cp -r backend/*.py backend/package/
 
-    - name: Deploy to AWS Lambda
-      run: |
-        aws lambda update-function-code --function-name KeepActiveProBackend --zip-file fileb://backend/package/fastapi_lambda.zip
+      - name: Create Deployment Package
+        run: |
+          cd backend/package
+          zip -r ../../fastapi_lambda.zip .
+
+      - name: Deploy to AWS Lambda
+        run: |
+          aws lambda update-function-code --function-name KeepActiveProBackend --zip-file fileb://fastapi_lambda.zip
+
+  deploy-frontend:
+    name: Deploy Frontend (S3 + CloudFront)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Sync Frontend Files to S3
+        run: |
+          aws s3 sync frontend/ s3://keepactivepro.com/ --delete
+
+      - name: Invalidate CloudFront Cache (Ensure New Content Loads)
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
